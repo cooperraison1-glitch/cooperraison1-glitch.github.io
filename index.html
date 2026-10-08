@@ -114,7 +114,7 @@ function loadPeer(){
  return libP;
 }
 function mkErr(m,c){const e=new Error(m);e.code=c;return e}
-async function join(name,opt){
+async function joinPeer(name,opt){
  await loadPeer();
  const asHost=!!(opt&&opt.host),hid=PK+name;
  const handlers={},peerCbs=[],peers=new Map(),conns=new Map();
@@ -198,6 +198,117 @@ async function join(name,opt){
  });
  room._ready=true;
  return room;
+}
+/* ---- Relay transport: MQTT over secure WebSockets via free public brokers ----
+   No NAT/TURN problems (everything goes through the broker). Several brokers are tried in
+   parallel, so one being down/blocked no longer breaks multiplayer. */
+const BROKERS=['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt','wss://test.mosquitto.org:8081','wss://mqtt.eclipseprojects.io:443/mqtt'];
+let mqP=null;
+function loadScript(u,ms){return new Promise((ok,no)=>{const s=document.createElement('script'),t=setTimeout(()=>{s.remove();no(new Error('timeout'))},ms);s.src=u;s.onload=()=>{clearTimeout(t);ok()};s.onerror=()=>{clearTimeout(t);no(new Error('load'))};document.head.appendChild(s)})}
+function loadMqtt(){
+ if(window.mqtt&&window.mqtt.connect)return Promise.resolve();
+ if(mqP)return mqP;
+ const urls=['https://cdn.jsdelivr.net/npm/mqtt@5.5.4/dist/mqtt.min.js','https://unpkg.com/mqtt@5.5.4/dist/mqtt.min.js','https://cdn.jsdelivr.net/npm/mqtt@4.3.7/dist/mqtt.min.js','https://unpkg.com/mqtt@4.3.7/dist/mqtt.min.js'];
+ mqP=(async()=>{
+  for(const u of urls){try{await loadScript(u,8000);if(window.mqtt&&window.mqtt.connect)return}catch(e){}}
+  mqP=null;throw mkErr('Could not load the networking library. Check your internet connection.','lib');
+ })();
+ return mqP;
+}
+function mqConnect(url,cid,topic,will,ms){
+ return new Promise(res=>{
+  let c=null,done=false;
+  const fin=v=>{if(done)return;done=true;clearTimeout(t);if(!v){try{c&&c.end(true)}catch(e){}}res(v)};
+  const t=setTimeout(()=>fin(null),ms);
+  try{c=mqtt.connect(url,{clientId:cid,clean:true,keepalive:30,connectTimeout:ms,reconnectPeriod:0,queueQoSZero:false,protocolVersion:4,will:{topic,payload:will,qos:0,retain:false}})}catch(e){return fin(null)}
+  c.on('connect',()=>fin(c));
+  c.on('error',()=>fin(null));
+  c.on('close',()=>fin(null));
+ });
+}
+const mqSub=(c,topic)=>new Promise(r=>{try{c.subscribe(topic,{qos:0},(err,g)=>r(!err&&!(g&&g[0]&&g[0].qos===128)))}catch(e){r(false)}});
+async function joinMqtt(name,opt){
+ await loadMqtt();
+ const asHost=!!(opt&&opt.host),topic='dustminer-v1/'+name;
+ const id='dm'+Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4);
+ const will=JSON.stringify({f:id,k:'b'});
+ const open=u=>mqConnect(u,id,topic,will,8000);
+ let c=null;
+ if(asHost){
+  /* host: take whichever broker answers first */
+  c=await new Promise(res=>{let n=BROKERS.length,got=null;BROKERS.forEach(u=>open(u).then(cl=>{if(cl){if(got)try{cl.end(true)}catch(e){}else{got=cl;res(cl)}}if(--n===0&&!got)res(null)}))});
+  if(!c)throw mkErr('Could not reach any multiplayer relay server. Check your internet connection (or a firewall blocking WebSockets).','net');
+  if(!await mqSub(c,topic)){try{c.end(true)}catch(e){}throw mkErr('The relay server refused the room.','net')}
+ }else{
+  /* joiner: try every broker at once, use the one where the host is actually present */
+  c=await new Promise((resolve,reject)=>{
+   const live=[];let pending=BROKERS.length,settled=false,t2=0;
+   const finish=(cl,err)=>{if(settled)return;settled=true;clearTimeout(t2);clearTimeout(dl);live.forEach(x=>{x.removeAllListeners('message');if(x!==cl)try{x.end(true)}catch(e){}});err?reject(err):resolve(cl)};
+   const dl=setTimeout(()=>finish(null,live.length?mkErr('Room not found. Check the code and make sure the host has created it.','nohost'):mkErr('Could not reach any multiplayer relay server. Check your internet connection (or a firewall blocking WebSockets).','net')),11000);
+   BROKERS.forEach(u=>open(u).then(async cl=>{
+    pending--;
+    if(!cl){if(!pending&&!live.length)finish(null,mkErr('Could not reach any multiplayer relay server. Check your internet connection (or a firewall blocking WebSockets).','net'));return}
+    if(settled){try{cl.end(true)}catch(e){}return}
+    live.push(cl);
+    if(!t2)t2=setTimeout(()=>finish(null,mkErr('Room not found. Check the code and make sure the host has created it.','nohost')),5000);
+    cl.on('message',(tp,pl)=>{let m;try{m=JSON.parse(pl.toString())}catch(e){return}if(m&&m.k==='p'&&m.h&&m.f!==id)finish(cl)});
+    if(await mqSub(cl,topic)&&cl.connected)cl.publish(topic,JSON.stringify({f:id,k:'w'}));
+   }));
+  });
+ }
+ const handlers={},peerCbs=[],peers=new Map();
+ let myPres=null,closed=false,lost=false,lastPres=0,hb=0;
+ const fire=(type,data,from)=>{(handlers[type]||[]).forEach(f=>{try{f({data,from,sameTab:false})}catch(e){console.error(e)}})};
+ const notify=(j,l)=>{if(!j.length&&!l.length)return;peerCbs.forEach(f=>{try{f({joined:j,left:l})}catch(e){console.error(e)}})};
+ const pub=m=>{if(!closed&&c.connected){try{c.publish(topic,JSON.stringify(m),{qos:0})}catch(e){}}};
+ const beat=()=>pub({f:id,k:'p',h:asHost?1:0,d:myPres});
+ const touch=(f,m)=>{let q=peers.get(f);const nw=!q;if(nw)q={id:f,presence:null,sameTab:false,host:0};q.seen=Date.now();if(m){if(m.d!=null)q.presence=m.d;q.host=m.h?1:0}if(nw){peers.set(f,q);notify([q],[])}};
+ const delPeer=f=>{const q=peers.get(f);if(q){peers.delete(f);notify([],[q])}};
+ c.on('message',(tp,pl)=>{
+  if(tp!==topic)return;
+  let m;try{m=JSON.parse(pl.toString())}catch(e){return}
+  if(!m||typeof m.f!=='string'||m.f===id)return;
+  if(m.k==='b'){delPeer(m.f);return}
+  touch(m.f,m.k==='p'?m:null);
+  if(m.k==='w')setTimeout(beat,Math.random()*300);
+  else if(m.k==='e')fire(m.t,m.d,m.f);
+ });
+ c.options.reconnectPeriod=2000;
+ c.on('close',()=>{if(!closed&&!lost){lost=true;if(typeof msg==='function')msg('Connection lost. Reconnecting...','#f93')}});
+ c.on('connect',()=>{if(lost&&!closed){lost=false;if(typeof msg==='function')msg('Reconnected.','#0ff');beat()}});
+ c.on('error',()=>{});
+ if(asHost){
+  pub({f:id,k:'w'});
+  await new Promise(r=>setTimeout(r,1500));
+  for(const q of peers.values())if(q.host){closed=true;try{c.end(true)}catch(e){}throw mkErr('That room code is already in use. Pick another.','taken')}
+ }
+ beat();
+ hb=setInterval(()=>{beat();const now=Date.now();[...peers.values()].forEach(q=>{if(now-q.seen>12000)delPeer(q.id)})},2000);
+ return {
+  emit(type,data){pub({f:id,k:'e',t:type,d:data});return Promise.resolve()},
+  on(type,f){(handlers[type]||(handlers[type]=[])).push(f)},
+  onPeers(f){peerCbs.push(f)},
+  peers(){return [...peers.values()]},
+  presence(d){myPres=d;const n=Date.now();if(n-lastPres>=200){lastPres=n;beat()}},
+  leave(){
+   if(closed)return;
+   pub({f:id,k:'b'});closed=true;clearInterval(hb);
+   setTimeout(()=>{try{c.end(true)}catch(e){}},200);
+  }
+ };
+}
+
+async function join(name,opt){
+ try{return await joinMqtt(name,opt)}
+ catch(e){
+  if(e&&e.code&&e.code!=='net'&&e.code!=='lib')throw e;
+  /* relay servers unreachable: fall back to direct peer-to-peer */
+  try{return await joinPeer(name,opt)}
+  catch(e2){
+   if(e2&&(e2.code==='nohost'||e2.code==='taken'))throw e2;
+   throw mkErr('Could not reach any multiplayer server. A firewall, VPN or browser extension may be blocking WebSocket connections.','net');
+  }
+ }
 }
 const browserRoom={join};
 const orig=window.claude;
@@ -713,7 +824,7 @@ function showMain(){story=0;playing=false;leaveRoom();$('cls').style.display='no
 function pickMode(m){story=0;mp=m;showMenu()}
 async function showLobby(){$('menu').style.display='flex';$('slots').style.display='none';lobEl().style.display='block';lst('');const pl=$('pl');pl.innerHTML='';
  try{const db=await claude.use('db');if(!db){pl.textContent='Public room list is only available in the claude.ai viewer. Share your room code instead.';return}const q=await db.collection('rooms').get();q.docs.forEach(d=>{const v=d.data();if(Date.now()-v.t<45000){const b=document.createElement('button');b.textContent=d.id+(v.pw?' (password)':' (open)');b.onclick=()=>{$('rc').value=d.id};pl.appendChild(b)}});if(!pl.children.length)pl.textContent='No public rooms right now.'}catch(e){pl.textContent='Public list unavailable.'}}
-async function enter(code,h){try{const r=await claude.use('room');if(!r){lst('Multiplayer only works inside the claude.ai viewer.');return 0}RM=await r.join('dm-'+code.toLowerCase().replace(/[^a-z0-9]/g,''),{host:!!h});RC=code;
+async function enter(code,h){try{lst('Connecting to the multiplayer server...');const r=await claude.use('room');if(!r){lst('Multiplayer only works inside the claude.ai viewer.');return 0}RM=await r.join('dm-'+code.toLowerCase().replace(/[^a-z0-9]/g,''),{host:!!h});RC=code;
  RM.onPeers(c=>{c.joined.forEach(q=>{if(!q.sameTab)msg('A player joined the room.','#0ff')});c.left.forEach(q=>{if(!q.sameTab)msg('A player left the room.','#f93')})});
  RM.on('pw',m=>{if(isHost&&!m.sameTab)RM.emit('pwr',{n:m.data.n,ok:m.data.h==PH})});RM.on('pwr',m=>{if(pend&&m.data.n==pend.n){pend.ok=m.data.ok;pend.done=1}});
  RM.on('hit',m=>{if(m.data.to==uid&&playing&&!inCap()&&P.duel&&P.duel==m.data.from)hurt({d:[m.data.d,m.data.d],k:'p',x:P.x,y:P.y,hp:99,from:m.data.from,rfl:m.data.rfl,dot:m.data.dot});if(m.data.kb&&P.duel==m.data.from&&!inCap())stumble(m.data.ax,m.data.ay)});RM.on('snap',m=>{if(isHost)return;const M=maps[m.data.m];if(!M)return;m.data.a.forEach((v,i)=>{let o=M.mobs[i];if(!o&&v[4]&&CR[v[4]]){o=M.mobs[i]={k:v[4],x:v[0],y:v[1],hx:v[0],hy:v[1],hp:v[2],mh:v[5],d:CR[v[4]].d,dead:v[3],res:0,nt:0,at:0,prov:0,host:0,ore:0,name:'',col:'#fff',tmp:1}}if(o){o.x=v[0];o.y=v[1];o.hp=v[2];o.dead=v[3];if(v[5])o.mh=v[5];o.sh=v[6]?NOW+v[6]:0}});M.tel=(m.data.t||[]).map(([x,y,r,rem,dl,bd,src,ex,ey,bm,vd])=>({x,y,r,t0:NOW+rem-dl,dl,col:bm?'#f4f':ex!=null?'#fed':bd?'#96f':'#f55',bd,src,ex,ey,bm,vd}))});
@@ -726,7 +837,7 @@ async function enter(code,h){try{const r=await claude.use('room');if(!r){lst('Mu
  RM.on('pvpacc',m=>{if(m.data.to==uid){P.duel=m.data.from;msg('PvP accepted! You can now fight '+(m.data.n||'them')+'.','#f33');banner('DUEL STARTED','#f33')}});
  RM.on('pvpno',m=>{if(m.data.to==uid)msg('Your PvP request was declined.','#f93')});
  RM.on('ldie',m=>{const L=maps[m.data.m];if(L)L.dd=1});RM.on('pvpend',m=>{if(m.data.to==uid&&P.duel==m.data.from){P.duel=null;msg('The duel has ended.','#ff0')}});
- RM.on('loot',m=>{if(m.data.to!=uid)return;const inv=(m.data.inv||[]).slice(0,300);let k=0;for(const o of inv){if(typeof o!='number'||!OR[o])continue;if(P.inv.length<28)P.inv.push(o);else P.bank.push(o);k++}const c=0;msg('You looted a fallen player\'s pack: '+k+' ore!','#ff0');banner('PLAYER LOOTED','#fc0');sfx('pick');ui()});return 1}catch(e){lst('Could not open the room: '+((e&&(e.code||e.message))||e));RM=null;return 0}}
+ RM.on('loot',m=>{if(m.data.to!=uid)return;const inv=(m.data.inv||[]).slice(0,300);let k=0;for(const o of inv){if(typeof o!='number'||!OR[o])continue;if(P.inv.length<28)P.inv.push(o);else P.bank.push(o);k++}const c=0;msg('You looted a fallen player\'s pack: '+k+' ore!','#ff0');banner('PLAYER LOOTED','#fc0');sfx('pick');ui()});return 1}catch(e){lst(((e&&(e.message||e.code))||String(e)));RM=null;return 0}}
 async function createRoom(){const code=$('rc').value.trim().toUpperCase()||Math.random().toString(36).slice(2,6).toUpperCase(),pw=$('rp').value;if(!await enter(code,1))return;isHost=true;PH=pw?hh(pw):'';seedWorld(code);startPlay();msg('Room '+code+(pw?' (password set)':'')+' is live. Share the code!','#0ff');if($('rpub').checked)pubBeat(1)}
 async function joinRoom(){const code=$('rc').value.trim().toUpperCase();if(!code)return lst('Enter a room code.');lst('Joining...');if(!await enter(code))return;pend={n:Math.random().toString(36).slice(2),done:0,ok:0};try{await RM.emit('pw',{n:pend.n,h:$('rp').value?hh($('rp').value):''})}catch(e){leaveRoom();return lst('Could not send the join request: '+((e&&(e.code||e.message))||e)+'. Your access level may be too low.')}const t0=Date.now();while(!pend.done&&Date.now()-t0<4000)await new Promise(r=>setTimeout(r,100));const ok=pend.ok,pend0done=pend.done;pend=null;if(!ok){const n=RM?RM.peers().length:0;leaveRoom();return lst(pend0done?'Wrong password.':'No host answered ('+n+' other players seen). Make sure the host is in the room with the same code.')}isHost=false;seedWorld(code);startPlay();msg('Joined room '+code+'.','#0ff')}
 async function pubBeat(first){try{const db=await claude.use('db');if(!db||!isHost||!RM)return;await db.collection('rooms').doc(RC).set({t:Date.now(),pw:PH?1:0});if(first)hbT=setInterval(()=>pubBeat(0),15000)}catch(e){}}
