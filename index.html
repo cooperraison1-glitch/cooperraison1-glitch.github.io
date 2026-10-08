@@ -733,7 +733,7 @@ function render(){document.querySelectorAll('#tabs button').forEach(b=>b.classNa
  else if(tab=='quest'){h='<p style="color:#ff0">Quests</p>';const q=QS[P.qi];if(!P.met)h+='<p style="font-weight:normal;color:#ddd">Walk up to the Unknown Stranger in the small capsule (bottom-right) and talk to him.</p>';else if(!q)h+='<p style="font-weight:normal;color:#ddd">All quests complete.</p>';else if(!P.qa)h+=row(q.n,'Not accepted. Talk to the Unknown Stranger to accept it.','New','',1);else{const p=qProg(q);h+=row(q.n,q.d+' · '+p+'/'+q.g+' · reward '+q.r+'cr'+(p>=q.g?'<br>Done! Talk to the Unknown Stranger to turn it in.':''),p>=q.g?'Ready':'Active','',1)}h+='<p style="font-weight:normal;color:#ddd">Completed '+P.qi+'/'+QS.length+'</p>';QS.slice(0,P.qi).forEach(x=>{h+='<p style="font-weight:normal;color:#9c9;margin:2px 0">✔ '+x.n+'</p>'})}
  else if(tab=='skill'){for(const c of['m','f','b']){const k=CAT[c][1],l=lv(P[k]);h+=`<p style="color:#ff0;margin:6px 0 0">${catName(c)} Lv ${l}<br><small style="font-weight:normal;color:#ddd">${P[k]}/${12*l*l} xp to next level</small></p>`;SKX(c).forEach((q,j)=>{const un=l>=q.lv;h+=row(q.n,un?q.d+' ('+q.cd/1000+'s cooldown)':'Unlocks at level '+q.lv,un?(P.sk[c]==j?'On':'Equip'):'Lv '+q.lv,`eqsk('${c}',${j})`,!un||P.sk[c]==j)})}h+='<p style="font-weight:normal">Keys: 1 mining · 2 fighting · 3 blocking/tactics, or tap the skill bar.</p>'}
  else if(tab=='base'){h='<p style="color:#ff0">Base (build anywhere, any area)</p>';BP.filter(b=>P.bpo.includes(b.id)).forEach(b=>{h+=row(b.n,b.d+' · needs '+b.o.map(([t,n])=>n+' '+OR[t].n+(P.inv.filter(q=>q==t).length>=n?'':' (short)')).join(', '),P.plc==b.id?'Cancel':'Place',`plc('${b.id}')`)});if(!P.bpo.length)h+='<p>Buy blueprints from '+dealer()+' first.</p>';h+=`<p>Placed ${P.base.length}/12 · Banked ore ${P.bank.length}</p>`;if(P.base.length){h+=row('Break mode',P.brk?'Click a structure on the map to remove it':'Remove structures one by one',P.brk?'Stop':'Break','brkMode()');P.base.forEach((b,i)=>{const B=BP.find(q=>q.id==b.id),A=AR.find(a=>a.id==(b.m||'surf'));h+=row(B.n,(A?A.n:'Boss lair')+' · tile '+b.x+','+b.y,'Remove',`brkAt(${i})`)})}h+=row('Clear base','Removes all structures','Clear','P.base=[];ui()',!P.base.length)}
- else if(tab=='set'){h='<p style="color:#ff0">Settings</p>'+row('Sound',mute?'Muted':'Effects on','Toggle','mute=!mute;ui()')+row('Save & quit','Auto-saves as you play','Quit','quitG()')+row('Restart game','Wipes this save file and builds new maps',conf?'Confirm':'Restart','rq()')+(conf?row('Keep playing','Cancel the restart','Cancel','conf=0;ui()'):'')+'<p style="font-weight:normal;color:#ddd">Controls: click ground to move, rocks to mine, enemies to fight, '+(story?'the Unknown Stranger':'Vex')+' to trade. Stay near the capsule when oxygen runs low.</p>'}
+ else if(tab=='set'){h='<p style="color:#ff0">Settings</p>'+row('Sound',mute?'Muted':'Effects on','Toggle','mute=!mute;ui()')+row('Ambience',amb?'On (wind, caves, chimes)':'Off','Toggle','amb=!amb;ui()')+row('Save & quit','Auto-saves as you play','Quit','quitG()')+row('Restart game','Wipes this save file and builds new maps',conf?'Confirm':'Restart','rq()')+(conf?row('Keep playing','Cancel the restart','Cancel','conf=0;ui()'):'')+'<p style="font-weight:normal;color:#ddd">Controls: click ground to move, rocks to mine, enemies to fight, '+(story?'the Unknown Stranger':'Vex')+' to trade. Stay near the capsule when oxygen runs low.</p>'}
  else{if(!cap)h='<p>Skins can only be bought in the capsule. Skins are soulbound: nobody can loot them.</p>';
   if(pv){const q=(pv.t=='s'?SS:PS)[pv.i];h+=`<div id=\"pvw\"><canvas id=\"pvc\" width=\"120\" height=\"132\"></canvas><b style=\"color:#ff0\">${q.n}</b><br><small style=\"font-weight:normal;color:#ddd\">Preview: ${pv.t=='s'?'wearing your equipped pickaxe':'on your equipped suit'}</small><br><button class=\"pvb\" style=\"background:#463e34;color:#ff0;border:1px solid #000;font:inherit;font-size:11px;padding:1px 8px;cursor:pointer\" onclick=\"pvSet(null)\">Close preview</button></div>`}
   for(const[t,l,A]of[['s','Suit',SS],['p','Pickaxe',PS]]){h+=`<p style=\"color:#ff0\">${l} skins</p>`;A.forEach((s,i)=>{const own=P.own[t].includes(i),st=own?(P.eq[t]==i?'Equipped':'Owned'):(s.boss!=null?'Boss reward: defeat '+BS[s.boss][0]:'Soulbound'),lb=own?(P.eq[t]==i?'On':'Equip'):(s.boss!=null?'Locked':s.c+'cr'),dis=(!own&&(s.boss!=null||!cap||P.cr<s.c))||P.eq[t]==i;h+=`<div class=\"rw\"><div><u><span style=\"color:${s.col}\">■</span> ${s.n}</u><br><small>${st}</small><br><button class=\"pvb\" onclick=\"pvSet('${t}',${i})\">Preview</button></div><button ${dis?'disabled':''} onclick=\"skin('${t}',${i})\">${lb}</button></div>`})}}
@@ -749,8 +749,8 @@ const QS=[
 const qCur=q=>q.k=='trop'?(P.trop||[]).length:P.st[q.k],qProg=q=>Math.max(0,Math.min(q.g,qCur(q)-(P.qb?P.qb[q.k]:0)));
 let dl=null;
 function dShow(){const d=document.getElementById('dlg');if(!dl){d.style.display='none';return}d.style.display='block';d.innerHTML='<u>'+(dl.n||'Unknown Stranger')+'</u><p>'+dl.t+'</p><div>'+dl.b.map(([l,f])=>'<button onclick="'+f+'">'+l+'</button>').join('')+'</div>'}
-function dClose(){dl=null;dShow()}
-function dSay(t,b,n){dl={t,b,n};dShow()}
+function dClose(){dl=null;dShow();talkStop()}
+function dSay(t,b,n){dl={t,b,n};dShow();talk(n||'Unknown Stranger',t)}
 function dealer(){return story?'the Unknown Stranger':'Vex'}function cap1(t){return t[0].toUpperCase()+t.slice(1)}
 const VEX=['Name is Vex. I buy ore, fix picks and sell the good gear. Ask no questions, I tell no lies.','Back again? Sell me your ore, or buy something that keeps you alive out there.','The dust will not mine itself. Trade with me, then get back out there.','Pack full of ore? Good. Let us talk credits.'];
 function openVex(){let t=VEX[Math.floor(Math.random()*VEX.length)];if(!P.met){P.met=1;t=VEX[0]}dSay(t,[['Trade','dTrade()'],['Leave','dClose()']],'Vex')}
@@ -848,7 +848,119 @@ function showPvp(f,n){pvpFrom=f;$('pvpt').textContent='Accept Duel Request?\nFro
 function pvpAns(y){$('pvp').style.display='none';clearTimeout(pvpT);if(!pvpFrom||!RM)return;if(y){P.duel=pvpFrom;RM.emit('pvpacc',{to:pvpFrom,from:uid,n:myName});msg('You accepted the duel. Fight!','#f33');banner('DUEL STARTED','#f33')}else RM.emit('pvpno',{to:pvpFrom,from:uid});pvpFrom=null}
 function leaveRoom(){$('pvp').style.display='none';clearInterval(hbT);if(RM){try{RM.leave()}catch(e){}if(isHost)claude.use('db').then(db=>db&&db.collection('rooms').doc(RC).delete()).catch(()=>0)}RM=null;isHost=false;for(const k in RP)delete RP[k]}
 function mpTick(t){if(isHost&&t>(mpTick.s||0)){mpTick.s=t+250;const ids=new Set([P.map]);for(const k in RP)ids.add(RP[k].m);ids.forEach(id=>{if(maps[id])RM.emit('snap',{m:id,a:maps[id].mobs.map(o=>[o.x,o.y,o.hp,o.dead?1:0,o.k,o.mh,o.sh>NOW?Math.round(o.sh-NOW):0]),t:(maps[id].tel||[]).map(q=>[q.x,q.y,q.r,Math.round(q.t0+q.dl-NOW),q.dl,q.bd?1:0,q.src,q.ex,q.ey,q.bm?1:0,q.vd])})})}if(t>(mpTick.n||0)){mpTick.n=t+250;RM.presence({u:uid,n:myName,m:P.map,x:P.x,y:P.y,s:P.eq.s,w:P.g.d,f:t<P.fu?1:0,b:P.base,p:P.eq.p})}const seen={};for(const q of RM.peers()){const d=q.presence;if(q.sameTab||!d||!d.u)continue;seen[d.u]=1;Object.assign(RP[d.u]||(RP[d.u]={u:d.u}),{x:d.x,y:d.y,m:d.m,n:d.n,s:d.s,w:d.w,f:d.f,b:d.b,p:d.p})}for(const k in RP)if(!seen[k])delete RP[k];if(P.duel&&!RP[P.duel]){P.duel=null;msg('Your PvP opponent left.','#ff0')}}
+
+/* ===== Ambience, music-ish chimes, UI clicks and talking voices ===== */
+let amb=true,AMB=null,ambNext=0,TKG=null,NZ=null;
+function ensureAC(){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state=='suspended')AC.resume();return AC}catch(e){return null}}
+['pointerdown','keydown','touchstart'].forEach(ev=>addEventListener(ev,()=>{if(!mute)ensureAC()},{passive:true}));
+document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('button');if(b&&!b.disabled)sfx('click')},true);
+const rnd=(a,b)=>a+Math.random()*(b-a);
+function noiseBuf(){if(NZ)return NZ;const n=AC.sampleRate*4,b=AC.createBuffer(1,n,AC.sampleRate),d=b.getChannelData(0);let l=0;for(let i=0;i<n;i++){l=(l+.02*(Math.random()*2-1))/1.02;d[i]=l*3.5}return NZ=b}
+/* wind centre freq, Q, wind level, drone freq, drone level, drone wave, random events, event interval (s) */
+const AP={
+ menu:{wf:380,wq:.7,wg:.6,dr:55,dg:.5,dt:'sine',ev:['gust','rumble','chime','chime'],iv:[4,9]},
+ surf:{wf:520,wq:.6,wg:.9,dr:0,dg:0,dt:'sine',ev:['gust','clank','rumble','chime'],iv:[4,10]},
+ cave:{wf:220,wq:1.2,wg:.5,dr:48,dg:.6,dt:'sine',ev:['drip','drip','rumble','creak'],iv:[2.5,7]},
+ ice:{wf:1100,wq:2.5,wg:.6,dr:0,dg:0,dt:'sine',ev:['crack','glass','gust'],iv:[3,8]},
+ mag:{wf:140,wq:.8,wg:.8,dr:42,dg:.7,dt:'sawtooth',ev:['pop','pop','rumble','hiss'],iv:[1.5,5]},
+ spo:{wf:300,wq:3,wg:.3,dr:73,dg:.5,dt:'sine',ev:['bloop','bloop','chirp','chime'],iv:[1.5,5]},
+ abs:{wf:120,wq:1,wg:.55,dr:36,dg:.9,dt:'sine',ev:['whale','drip','rumble'],iv:[5,11]},
+ rif:{wf:700,wq:6,wg:.3,dr:61,dg:.6,dt:'triangle',ev:['shimmer','warp'],iv:[2.5,7]},
+ obs:{wf:640,wq:1.5,wg:.8,dr:0,dg:0,dt:'sine',ev:['glass','gust','clank'],iv:[3,9]},
+ sto:{wf:420,wq:.5,wg:1.1,dr:0,dg:0,dt:'sine',ev:['thunder','gust','gust'],iv:[3,9]},
+ bon:{wf:260,wq:2,wg:.5,dr:45,dg:.4,dt:'triangle',ev:['creak','rattle','gust'],iv:[2.5,8]},
+ pla:{wf:900,wq:.8,wg:.2,dr:60,dg:.7,dt:'sawtooth',ev:['zap','zap','hum'],iv:[1.5,5]},
+ hor:{wf:90,wq:1,wg:.55,dr:30,dg:1,dt:'sine',ev:['warp','whale','shimmer'],iv:[3,8]}
+};
+function ambBuild(key,boss){
+ const g=AC.createGain();g.gain.value=0;g.connect(AC.destination);
+ const p=AP[key]||AP.cave,nodes=[],o={g,nodes,boss};
+ const s=AC.createBufferSource();s.buffer=noiseBuf();s.loop=true;
+ const f=AC.createBiquadFilter();f.type='bandpass';f.frequency.value=p.wf;f.Q.value=p.wq;
+ const wg=AC.createGain();wg.gain.value=.22*p.wg;
+ const l=AC.createOscillator(),lg=AC.createGain();l.frequency.value=rnd(.07,.17);lg.gain.value=.1*p.wg;l.connect(lg);lg.connect(wg.gain);
+ const l2=AC.createOscillator(),l2g=AC.createGain();l2.frequency.value=rnd(.05,.11);l2g.gain.value=p.wf*.35;l2.connect(l2g);l2g.connect(f.frequency);
+ s.connect(f);f.connect(wg);wg.connect(g);
+ s.start();l.start();l2.start();nodes.push(s,l,l2);
+ if(p.dr)[1,1.006].forEach(m=>{const os=AC.createOscillator(),og=AC.createGain(),lp=AC.createBiquadFilter();os.type=p.dt;os.frequency.value=p.dr*m;lp.type='lowpass';lp.frequency.value=p.dt=='sine'?400:180;og.gain.value=.03*p.dg*(boss?1.5:1);os.connect(lp);lp.connect(og);og.connect(g);os.start();nodes.push(os)});
+ if(boss){const os=AC.createOscillator(),og=AC.createGain();os.type='sawtooth';os.frequency.value=32;const lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=110;og.gain.value=.03;os.connect(lp);lp.connect(og);og.connect(g);os.start();nodes.push(os)}
+ return o;
+}
+function ambSet(key,boss){
+ const k=key?key+(boss?'*':''):'';
+ if(AMB&&AMB.k===k)return;
+ if(AMB){const o=AMB;AMB=null;o.g.gain.cancelScheduledValues(AC.currentTime);o.g.gain.setTargetAtTime(0,AC.currentTime,.5);setTimeout(()=>{o.nodes.forEach(n=>{try{n.stop()}catch(e){}});try{o.g.disconnect()}catch(e){}},3000)}
+ if(key){AMB=ambBuild(key,boss);AMB.k=k;AMB.key=key;AMB.g.gain.setTargetAtTime(.9,AC.currentTime,.9);ambNext=performance.now()+1500}
+}
+/* one-shot helpers: they play through the current ambience bus so they fade with it */
+function aOut(pan){const o=AMB;if(!o)return null;if(AC.createStereoPanner){const p=AC.createStereoPanner();p.pan.value=pan==null?rnd(-.8,.8):pan;p.connect(o.g);return p}return o.g}
+function aTone(f,d,ty,v,f2,dl,fl,pan){const out=aOut(pan);if(!out)return;const t=AC.currentTime+(dl||0),os=AC.createOscillator(),g=AC.createGain();os.type=ty;os.frequency.setValueAtTime(f,t);if(f2)os.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(v,t+Math.min(.03,d/4));g.gain.exponentialRampToValueAtTime(.0001,t+d);let n=os;if(fl){const lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=fl;os.connect(lp);n=lp}n.connect(g);g.connect(out);os.start(t);os.stop(t+d+.05)}
+function aNoise(d,v,fq,q,ty,att,dl,pan){const out=aOut(pan);if(!out)return;const t=AC.currentTime+(dl||0),s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=noiseBuf();f.type=ty;f.frequency.value=fq;f.Q.value=q;const a=att||.02;g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(f);f.connect(g);g.connect(out);s.start(t,Math.random()*2);s.stop(t+d+.05)}
+const PENT=[220,246.9,293.7,329.6,370,440,493.9,587.3];
+const AEV={
+ gust:()=>aNoise(rnd(2.5,4),.35,rnd(500,1000),.5,'bandpass',1.2),
+ rumble:()=>{aNoise(3,.6,70,.8,'lowpass',1.2);aTone(45,3,'sine',.08,38,0,null,0)},
+ clank:()=>{const f=rnd(700,1200);aTone(f,.5,'square',.012,0,0,2500);aTone(f*1.5,.35,'triangle',.01)},
+ drip:()=>{const f=rnd(1300,2000);aTone(f,.12,'sine',.05,500,0,null,.3);aTone(f*.9,.12,'sine',.025,450,.2,null,.3)},
+ crack:()=>{aNoise(.12,.35,2500,1,'highpass',.004);aTone(1800,.1,'square',.02,600)},
+ glass:()=>{[2093,2637,3136,3520].sort(()=>Math.random()-.5).slice(0,2).forEach((f,i)=>aTone(f,1.1,'sine',.025,0,i*.09))},
+ pop:()=>{const f=rnd(110,190);aTone(f,.2,'sine',.12,f*2.4);aNoise(.09,.12,500,1,'bandpass',.004)},
+ hiss:()=>aNoise(1,.25,3000,1,'highpass',.2),
+ bloop:()=>{const f=rnd(280,480);aTone(f,.22,'sine',.07,f*2);if(Math.random()<.5)aTone(f*1.25,.22,'sine',.05,f*2.4,.18)},
+ chirp:()=>{aTone(2000,.07,'sine',.035,3000);aTone(2400,.07,'sine',.03,3400,.1)},
+ whale:()=>{aTone(90,4,'sine',.1,140,0,null,rnd(-1,1));aTone(180,4,'sine',.035,280,0,null,rnd(-1,1))},
+ shimmer:()=>[880,1108,1318,1760].forEach((f,i)=>aTone(f*rnd(.99,1.01),1.6,'sine',.022,0,i*.11)),
+ warp:()=>{aTone(200,3,'sawtooth',.035,60,0,300);aTone(60,3,'sine',.08,200)},
+ thunder:()=>{aNoise(3.8,.9,120,.7,'lowpass',.2);aNoise(2.2,.4,320,.5,'lowpass',.3,.4)},
+ creak:()=>{const f=rnd(150,220);aTone(f,.7,'sawtooth',.025,f*1.5,0,500);aTone(f*1.5,.5,'sawtooth',.015,f,.6,500)},
+ rattle:()=>{for(let i=0;i<5;i++)aNoise(.04,.25,rnd(1500,2400),2,'bandpass',.003,i*.06+Math.random()*.03)},
+ zap:()=>{aNoise(.16,.3,4000,2,'bandpass',.005);aTone(1200,.12,'sawtooth',.03,200,0,2000)},
+ hum:()=>aTone(120,3,'sine',.07,125,0,null,0),
+ beat:()=>{aTone(60,.18,'sine',.3,40,0,null,0);aTone(55,.2,'sine',.22,35,.28,null,0)},
+ growl:()=>{aTone(70,1.3,'sawtooth',.06,45,0,160,0);aNoise(1.3,.25,200,.8,'lowpass',.3,0,0)},
+ chime:()=>{const f=PENT[Math.floor(Math.random()*PENT.length)]*(Math.random()<.4?2:1);aTone(f,3.2,'sine',.035);aTone(f*1.5,3,'sine',.012,0,.02)}
+};
+function ambTick(t){
+ if(!AC)return;
+ if(!amb||mute){if(AMB)ambSet(null);return}
+ let id='menu',boss=false;
+ if(playing){id=P.map;boss=/^b\d+$/.test(id);if(boss)id=AR[AI[id]].id;if(!AP[id])id='cave'}
+ ambSet(id,boss);
+ if(AMB&&t>ambNext){
+  const p=AP[AMB.key],ev=AMB.boss?['beat','beat','growl','rumble']:p.ev;
+  try{AEV[ev[Math.floor(Math.random()*ev.length)]]()}catch(e){}
+  ambNext=t+rnd(p.iv[0],p.iv[1])*1000*(AMB.boss?.45:1);
+ }
+}
+/* ---- little talking blips for Vex / the Unknown Stranger ---- */
+function talkStop(){if(TKG&&AC){try{TKG.gain.cancelScheduledValues(AC.currentTime);TKG.gain.setTargetAtTime(0,AC.currentTime,.02)}catch(e){}}TKG=null}
+function talk(who,html){
+ talkStop();if(mute||!ensureAC())return;
+ try{
+  const txt=String(html).replace(/<[^>]*>/g,'').replace(/&[a-z#0-9]+;/g,' ');
+  const vex=who=='Vex',g=AC.createGain();g.gain.value=1;g.connect(AC.destination);TKG=g;
+  let out=g,dly=null;
+  if(!vex){dly=AC.createDelay(1);dly.delayTime.value=.17;const fb=AC.createGain();fb.gain.value=.35;const wet=AC.createGain();wet.gain.value=.45;g.connect(dly);dly.connect(fb);fb.connect(dly);dly.connect(wet);wet.connect(AC.destination)}
+  const base=vex?95:210,sem=vex?[0,3,5,7,2,-2]:[0,-2,-5,3,-7,1],step=vex?.07:.09;
+  const bp=(f,t,d,ty,vol,glide,lp)=>{const o=AC.createOscillator(),e=AC.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);if(glide)o.frequency.exponentialRampToValueAtTime(f*glide,t+d);e.gain.setValueAtTime(.0001,t);e.gain.linearRampToValueAtTime(vol,t+.008);e.gain.exponentialRampToValueAtTime(.0001,t+d);let n=o;if(lp){const fl=AC.createBiquadFilter();fl.type='lowpass';fl.frequency.value=lp;o.connect(fl);n=fl}n.connect(e);e.connect(out);o.start(t);o.stop(t+d+.03)};
+  const t0=AC.currentTime+.04;let t=t0,k=0;
+  for(const ch of txt){
+   if(t-t0>3.4)break;
+   if(ch==' '){t+=.025;continue}
+   if(/[,;:]/.test(ch)){t+=.12;continue}
+   if(/[.!?]/.test(ch)){t+=.24;continue}
+   if(!/[a-z0-9]/i.test(ch))continue;
+   if(k++%2)continue;
+   const f=base*Math.pow(2,(sem[ch.toLowerCase().charCodeAt(0)%sem.length]+rnd(-.3,.3))/12);
+   if(vex){bp(f,t,.055,'sawtooth',.07,.9,650);bp(f*2,t,.04,'square',.012,0,900)}
+   else{bp(f,t,.08,'sine',.07,.82);bp(f*1.5,t,.07,'triangle',.02,.8)}
+   t+=step;
+  }
+  setTimeout(()=>{if(TKG===g)TKG=null;try{g.disconnect()}catch(e){}if(dly)try{dly.disconnect()}catch(e){}},(t-t0)*1000+2500);
+ }catch(e){}
+}
+
 let last=performance.now();
-function loop(t){const dt=Math.min(.1,(t-last)/1000);last=t;if(playing){upd(dt,t);if(RM)mpTick(t);if(P.map!='surf'&&Math.random()<.004)sfx('drip')}draw(t);if(dirty){dirty=0;render();save()}requestAnimationFrame(loop)}
+function loop(t){const dt=Math.min(.1,(t-last)/1000);last=t;if(playing){upd(dt,t);if(RM)mpTick(t);if(P.map!='surf'&&Math.random()<.004)sfx('drip')}ambTick(t);draw(t);if(dirty){dirty=0;render();save()}requestAnimationFrame(loop)}
 render();showMain();requestAnimationFrame(loop);
 </script></body></html>
