@@ -295,7 +295,7 @@ function build(ai){const Z=AR[ai],surf=ai==0,g=[];
   M.mobs.push({k,x:i,y:j,hx:i,hy:j,hp,mh:hp,d:(bot?[2+ai*3,5+ai*5]:CR[k].d).map(v=>Math.round(v*1.2)),dead:0,res:0,nt:0,at:0,prov:0,host,ore:R(1,3),name:(host?'Bandit ':'Miner ')+NAMES[R(0,7)],col:SS[R(0,4)].col});m++}fl.sort(()=>Math.random()-.5)};
  if(surf){mob('z',2,20,25,0);mob('b',2,12,24,0)}else{mob(Z.mob,ai==1?9:8,ai==1?8:6,W,0);mob('b',ai==1?3:2,6,W,0);mob('b',2,10,W,1)}
  maps['b'+ai]=buildBoss(ai);return M}
-const maps={};AR.forEach((a,i)=>maps[a.id]=build(i));
+let story=0;const maps={};AR.forEach((a,i)=>maps[a.id]=build(i));
 const inCap=()=>P.map=='surf'&&maps.surf.g[P.y][P.x]==2;
 const strCap=()=>P.map=='surf'&&maps.surf.g[P.y][P.x]==5;
 const trd=()=>{const n=P.map=='surf'&&maps.surf&&maps.surf.npc;return !!n&&Math.hypot(P.x-n.x,P.y-n.y)<=3.2};
@@ -679,7 +679,6 @@ let slot=-1,playing=false,delc=-1;const mem={},FX=[];
 const sget=i=>{try{return localStorage.getItem('dm'+i)}catch(e){return mem[i]||null}},sset=(i,v)=>{try{v==null?localStorage.removeItem('dm'+i):localStorage.setItem('dm'+i,v)}catch(e){if(v==null)delete mem[i];else mem[i]=v}};
 const KEYS=['cr','inv','xp','fx','bx','g','du','own','eq','wown','sk','bpo','base','bank','cls','trop','st','qd','qi','qa','met','qb'];
 function save(){if(slot<0||!playing)return;const o={};KEYS.forEach(k=>o[k]=P[k]);sset(slot,JSON.stringify(o))}
-let story=0;
 function mkMaps(){for(const k in maps)delete maps[k];if(story){const M=build(0);M.g[10][W-1]=1;M.g[11][W-1]=1;M.g[H-1][16]=1;maps.surf=M;for(const k in maps)if(k!='surf')delete maps[k];if(P.qi>=3)openBiome()}else AR.forEach((a,k)=>maps[a.id]=build(k))}
 function openBiome(){if(!story||maps[AR[1].id])return;const S0=maps.surf;S0.g[10][W-1]=3;S0.g[11][W-1]=3;const M=build(1);M.g[10][W-1]=1;M.g[11][W-1]=1;M.g[H-1][16]=1;maps[AR[1].id]=M;delete maps.b1}
 function startStory(){story=1;mp=0;showMenu()}
