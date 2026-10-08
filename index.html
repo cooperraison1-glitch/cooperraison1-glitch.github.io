@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Dust Miner</title>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>DustMiners</title>
 <style>
 :root{--bg:#1b1712;--panel:#5d5447;--edge:#2e271f;--txt:#ff981f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1712}}
@@ -103,14 +103,14 @@ canvas{border-radius:12px;border:2px solid var(--line);box-shadow:0 8px 28px rgb
 #stg .kb.cap{outline:2px solid #0ff;color:#0ff}
 #stg .sf{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
 #stg .sn{font-weight:normal;font-size:12px;color:#bbb;margin:6px 0}
-</style></head><body><div id="menu"><h1>DUST MINER</h1><p style="color:#f93;letter-spacing:3px;margin:0">MINE · FIGHT · SURVIVE THE DUST</p><div id="mm"><button class="big" onclick="pickMode(0)">Singleplayer</button><button class="big" onclick="startStory()">Story Mode</button><button class="big" onclick="pickMode(1)">Multiplayer</button><button class="big" onclick="openSet()">Settings</button></div><div id="unw"><label for="un">Username</label><input id="un" maxlength="16" autocomplete="off" spellcheck="false" placeholder="Enter a name"></div><div id="slots" style="display:none"></div>
+</style></head><body><div id="menu"><h1>DUSTMINERS</h1><p style="color:#f93;letter-spacing:3px;margin:0">MINE · FIGHT · SURVIVE THE DUST</p><div id="mm"><button class="big" onclick="pickMode(0)">Singleplayer</button><button class="big" onclick="startStory()">Story Mode</button><button class="big" onclick="pickMode(1)">Multiplayer</button><button class="big" onclick="openSet()">Settings</button></div><div id="unw"><label for="un">Username</label><input id="un" maxlength="16" autocomplete="off" spellcheck="false" placeholder="Enter a name"></div><div id="slots" style="display:none"></div>
 <div id="cls" style="display:none"><p style="font-size:20px;color:#ff0">Choose your class</p>
 <div class="slot"><u>Swordsman</u><br><small>Sword and shield. Tough close-range fighter. The only class that can use shields.</small><div><button onclick="pickCls('sw')">Swordsman</button></div></div>
 <div class="slot"><u>Spearman</u><br><small>Spears only. Attacks from up to 3 tiles away.</small><div><button onclick="pickCls('sp')">Spearman</button></div></div>
 <div class="slot"><u>Ranger</u><br><small>Bows only. Click an enemy to shoot it from up to 5 tiles away.</small><div><button onclick="pickCls('rn')">Ranger</button></div></div></div>
 <div id="lob" style="display:none"><p>Create or join a room</p><input id="rc" placeholder="Room code"><input id="rp" placeholder="Password (optional)"><label><input type="checkbox" id="rpub"> Public room</label><div><button class="big" style="font-size:16px" onclick="createRoom()">Create</button><button class="big" style="font-size:16px" onclick="joinRoom()">Join</button></div><p style="margin:2px">Public rooms</p><div id="pl"></div><p id="ls" style="color:#f66"></p><button class="big" style="font-size:13px" onclick="showMain()">Back</button></div><p style="color:#a99;font-weight:normal;font-size:12px">Saves are stored in this browser.</p></div><div id="lkm" style="display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:30;background:#5d5447;border:3px solid #2e271f;padding:10px 12px;width:min(460px,94vw);max-height:88vh;overflow-y:auto;color:#ddd;box-shadow:0 0 0 2px #000"></div><div id="pvp" style="display:none;position:fixed;left:8px;top:60px;z-index:20;background:#5d5447;border:3px solid #2e271f;padding:10px 12px;max-width:min(300px,90vw);text-align:left;color:#ff0;box-shadow:0 0 0 2px #000"><p id="pvpt" style="margin:0 0 8px;white-space:pre-line"></p><button class="big" style="font-size:14px;padding:6px 18px" onclick="pvpAns(1)">Yes</button><button class="big" style="font-size:14px;padding:6px 18px" onclick="pvpAns(0)">No</button></div>
 <div id="stgb" onclick="closeSet()"></div><div id="stg"></div><div id="dlg"></div><div id="w">
-<div id="top"><canvas id="c"></canvas><div id="side"><div id="tabs"><button data-t="inv" onclick="T('inv')">Pack</button><button data-t="gear" onclick="T('gear')">Gear</button><button data-t="shop" onclick="T('shop')">Trade</button><button data-t="skill" onclick="T('skill')">Skills</button><button data-t="base" onclick="T('base')">Base</button><button data-t="skin" onclick="T('skin')">Skins</button><button data-t="quest" onclick="T('quest')">Quests</button><button data-t="set" onclick="T('set')">Menu</button></div><div id="pc"></div></div></div>
+<div id="top"><canvas id="c"></canvas><div id="side"><div id="tabs"><button data-t="inv" onclick="T('inv')">Pack</button><button data-t="gear" onclick="T('gear')">Gear</button><button data-t="shop" onclick="T('shop')">Trade</button><button data-t="skill" onclick="T('skill')">Skills</button><button data-t="base" onclick="T('base')">Base</button><button data-t="skin" onclick="T('skin')">Skins</button><button data-t="quest" onclick="T('quest')">Quests</button><button data-t="ach" onclick="T('ach')">Awards</button><button data-t="set" onclick="T('set')">Menu</button></div><div id="pc"></div></div></div>
 <div id="ch"></div><div id="help">Click to move · click rocks to mine · click enemies to fight · keys 1/2/3 use skills · the Unknown Stranger sits in the small capsule bottom-right</div></div>
 <script>
 /* Browser multiplayer transport (WebRTC via PeerJS). Provides the same room API the game
@@ -381,7 +381,7 @@ const bt=t=>OR[t].bi!=null?OR[t].bi:t,rollOre=t=>{const b=bt(t);return Math.rand
 Object.assign(CR,{o:{n:'Obsidian Golem',hp:300,d:[24,38],sp:900,ar:5,cr:[600,900],c:'#5a4a8a',sn:'cm'},t:{n:'Storm Wisp',hp:260,d:[28,44],sp:380,ar:8,cr:[900,1400],c:'#7df',sn:'cf'},k:{n:'Bone Reaper',hp:380,d:[34,52],sp:500,ar:7,cr:[1400,2200],c:'#e8e0c8',sn:'cb'},r:{n:'Reactor Drone',hp:480,d:[42,64],sp:400,ar:8,cr:[2200,3500],c:'#c4c',sn:'cw'},h:{n:'Horizon Beast',hp:700,d:[60,95],sp:450,ar:9,cr:[4000,6500],c:'#ddd',sn:'ca'}});
 const AI={};AR.forEach((a,i)=>{AI[a.id]=i;AI['b'+i]=i});
 let NOW=0,tab='inv',dirty=1;const S=[];
-const mkP=()=>({x:4,y:11,map:'surf',hp:30,mh:30,o2:90,path:[],tg:null,nm:0,na:0,rp:0,mp:0,wm:0,lw:0,cr:0,inv:[],xp:0,g:{p:0,s:0,d:0,sh:0},du:40,own:{s:[0],p:[0]},eq:{s:0,p:0},fx:0,bx:0,wown:[0],trop:[],cls:null,sk:{m:-1,f:-1,b:-1},cd:{m:0,f:0,b:0},bpo:[],base:[],bank:[],plc:null,st:{mine:0,kill:0,sold:0},qd:[],qi:0,qa:0,met:0,qb:null});const P=mkP();let conf=0;
+const mkP=()=>({x:4,y:11,map:'surf',hp:30,mh:30,o2:90,path:[],tg:null,nm:0,na:0,rp:0,mp:0,wm:0,lw:0,cr:0,inv:[],xp:0,g:{p:0,s:0,d:0,sh:0},du:40,own:{s:[0],p:[0]},eq:{s:0,p:0},fx:0,bx:0,wown:[0],trop:[],cls:null,sk:{m:-1,f:-1,b:-1},cd:{m:0,f:0,b:0},bpo:[],base:[],bank:[],plc:null,st:{mine:0,kill:0,sold:0},qd:[],qi:0,qa:0,met:0,qb:null,ach:[],vis:['surf'],rv:[]});const P=mkP();let conf=0;
 const lv=x=>1+Math.floor(Math.sqrt(x/12)),lvl=()=>lv(P.xp),val=()=>P.inv.reduce((a,o)=>a+OR[o].v,0);
 function msg(t,c='#fff'){const ch=document.getElementById('ch'),d=document.createElement('div');d.style.color=c;d.textContent=t;ch.appendChild(d);ch.scrollTop=1e9;if(ch.children.length>60)ch.firstChild.remove()}
 function flood(g,sx,sy){const s=new Set([sx+','+sy]),q=[[sx,sy]];while(q.length){const[a,b]=q.pop();for(const[dx,dy]of D){const i=a+dx,j=b+dy;if(i>=0&&j>=0&&i<W&&j<H&&g[j][i]!=1&&!s.has(i+','+j)){s.add(i+','+j);q.push([i,j])}}}for(let j=0;j<H;j++)for(let i=0;i<W;i++)if(g[j][i]!=1&&!s.has(i+','+j))g[j][i]=1}
@@ -438,7 +438,7 @@ function path(M,sx,sy,goal){const key=(a,b)=>a+','+b,prev={[key(sx,sy)]:null},q=
  while(h<q.length){const[a,b]=q[h++];if(goal(a,b)){const r=[];let k=key(a,b);while(prev[k]){r.unshift(prev[k].s);k=prev[k].f}return r}
   for(const[dx,dy]of D){const i=a+dx,j=b+dy,k=key(i,j);if(i<0||j<0||i>=W||j>=H||M.g[j][i]==1||k in prev||bl.has(k))continue;prev[k]={f:key(a,b),s:[i,j]};q.push([i,j])}}return null}
 const splat=(i,j,v,c)=>{if(CFG.dmg)S.push({x:i,y:j,v,t:NOW,c});burst(i*T_+12,j*T_+12,c||(v?'#f55':'#59f'),v?8:3,110,500)};
-function die(){{const L=maps[P.map];if(L&&/^b\d+$/.test(P.map)){L.dd=1;if(RM)RM.emit('ldie',{m:P.map})}}if(RM&&P.duel)RM.emit('pvpend',{to:P.duel,from:uid});shk=14;flash=1;banner('YOU DIED','#f33');sfx('death');const pk=RM&&P.lh&&NOW-P.lh.t<8000?P.lh.u:null,cl=P.cls;
+function die(){P.st.death=(P.st.death||0)+1;{const L=maps[P.map];if(L&&/^b\d+$/.test(P.map)){L.dd=1;if(RM)RM.emit('ldie',{m:P.map})}}if(RM&&P.duel)RM.emit('pvpend',{to:P.duel,from:uid});shk=14;flash=1;banner('YOU DIED','#f33');sfx('death');const pk=RM&&P.lh&&NOW-P.lh.t<8000?P.lh.u:null,cl=P.cls;
  if(pk)RM.emit('loot',{to:pk,inv:P.inv.slice(0,28),cr:0});
  msg('Oh dear, you are dead!','#f33');const n=P.inv.length;P.inv=[];msg(pk?(n?'You were killed by a player. They took your pack ('+n+' ore). Everything else is safe.':'You were killed by a player, but your pack was empty.'):(n?'You dropped '+n+' ore. Skins and credits are safe.':'You carried nothing of value.'),pk?'#f33':'#ff0');P.duel=null;P.map='surf';P.x=4;P.y=11;P.path=[];P.tg=null;P.hp=P.mh;P.o2=SU[P.g.s].tank;ui()}
 function gain(k,n){const c=k=='xp'?'m':k=='fx'?'f':'b',o=lv(P[k]);P[k]+=n;const l=lv(P[k]);if(l>o){msg(catName(c)+' level is now '+l+'!','#0f0');banner(catName(c).toUpperCase()+' LEVEL '+l,'#0f0');sfx('lvl');burst(P.x*T_+12,P.y*T_+12,'#ff0',40,170,1000);SKX(c).forEach((q,j)=>{if(o<q.lv&&l>=q.lv){msg('New '+catName(c)+' skill unlocked: '+q.n+'! Equip it in the Skills tab.','#0ff');banner('SKILL UNLOCKED: '+q.n,'#0ff');if(P.sk[c]<0)P.sk[c]=j}})}ui()}
@@ -542,7 +542,7 @@ function upd(dt,now){NOW=now;if(playing&&story&&!P.met&&!dl&&P.map=='surf'&&Math
     if(o.tier>pk.tier){msg('Your pickaxe is too weak for '+o.n+'.','#f66');P.tg=null}
     else if(P.du<=0){msg('Your pickaxe is broken. Repair it with '+dealer()+'.','#f66');P.tg=null}
     else if(P.inv.length>=28){msg('Your pack is full.','#f66');P.tg=null}
-    else{mining=true;if(!(now<P.ms)){P.ms=now+450;sfx('mine');burst(r.x*T_+12,r.y*T_+12,'#bbb',4,80,350)}P.mp+=dt*pk.sp*(1+.04*lvl())*(now<P.bm?2:1)/o.t;if(P.mp>=1){const l0=lvl();{let n=NOW<P.dy?2:1;if(P.ml>0){n=3;P.ml--}for(let q=0;q<n&&P.inv.length<28;q++){P.inv.push(r.t);P.st.mine++}}P.du--;const xpg=(bt(r.t)+1)*10*(o.vr?2:1);r.rs=now+16000;const mt=r.t;r.t=rollOre(mt);if(RM)RM.emit('ore',{m:P.map,x:r.x,y:r.y,t:r.t});burst(r.x*T_+12,r.y*T_+12,OR[mt].col,o.vr?30:16,130,700);sfx('ore');shk=Math.max(shk,3);gain('xp',xpg);P.mp=0;P.tg=null;msg((o.vr?'RARE! You mine '+o.n+'! (worth '+o.v+'cr) ':'You mine some '+o.n+'. ')+'(+'+xpg+' xp)',o.vr?'#fff':'#ff0');if(o.vr)banner('RARE ORE: '+o.n.toUpperCase(),'#ff0');ui()}}}
+    else{mining=true;if(!(now<P.ms)){P.ms=now+450;sfx('mine');burst(r.x*T_+12,r.y*T_+12,'#bbb',4,80,350)}P.mp+=dt*pk.sp*(1+.04*lvl())*(now<P.bm?2:1)/o.t;if(P.mp>=1){const l0=lvl();{let n=NOW<P.dy?2:1;if(P.ml>0){n=3;P.ml--}for(let q=0;q<n&&P.inv.length<28;q++){P.inv.push(r.t);P.st.mine++}}P.du--;const xpg=(bt(r.t)+1)*10*(o.vr?2:1);r.rs=now+16000;const mt=r.t;r.t=rollOre(mt);if(RM)RM.emit('ore',{m:P.map,x:r.x,y:r.y,t:r.t});burst(r.x*T_+12,r.y*T_+12,OR[mt].col,o.vr?30:16,130,700);sfx('ore');shk=Math.max(shk,3);gain('xp',xpg);P.mp=0;P.tg=null;msg((o.vr?'RARE! You mine '+o.n+'! (worth '+o.v+'cr) ':'You mine some '+o.n+'. ')+'(+'+xpg+' xp)',o.vr?'#fff':'#ff0');if(o.vr){banner('RARE ORE: '+o.n.toUpperCase(),'#ff0');P.st.rare=(P.st.rare||0)+1;if(!P.rv.includes(mt))P.rv.push(mt)}ui()}}}
    else if(t.k=='pl'){if(cap){msg("No fighting in the capsule.");P.tg=null}else if(P.duel!=r.u){if(now>(P.rq||0)){P.rq=now+5000;RM.emit('pvpreq',{to:r.u,from:uid,n:myName}).catch(e=>msg('Could not send the request ('+((e&&e.code)||'error')+'). Your access level may be too low.','#f66'));msg('PvP request sent to '+(r.n||'that player')+'. They must accept first.','#f93')}P.tg=null}
    else if(now>=P.na&&RM){P.na=now+DG[P.g.d].sp;P.fu=now+1500;if(rch()>1)FX.push({x:P.x,y:P.y,tx:r.x,ty:r.y,t:now,c:'#fe8',ln:1});hitPl(r,1)}}
    else if(t.k=='mob'){if(cap){msg("You can't fight inside the capsule.");P.tg=null}
@@ -744,6 +744,53 @@ let pv=null;
 function pvSet(t,i){pv=t?{t,i}:null;ui()}
 function pvDraw(t){if(lkO&&(!playing||P.map!=(lkO.m||'surf')||Math.hypot(lkO.x-P.x,lkO.y-P.y)>4.5))closeLk();const c=document.getElementById('pvc');if(pv&&tab=='skin'&&c){const g=c.getContext('2d'),sv=x;g.setTransform(1,0,0,1,0,0);g.imageSmoothingEnabled=false;g.fillStyle='#2e271f';g.fillRect(0,0,c.width,c.height);g.fillStyle='#3b342d';g.fillRect(0,c.height-22,c.width,22);g.setTransform(3,0,0,3,0,0);x=g;try{const su=pv.t=='s'?SS[pv.i].col:SS[P.eq.s].col,pk=pv.t=='p'?PS[pv.i].col:PS[P.eq.p].col;man(8,15,su,pk,1,t,DG[P.g.d],0,pv.t=='s'?pv.i:P.eq.s,pv.t=='p'?pv.i:P.eq.p)}catch(e){}finally{x=sv}g.setTransform(1,0,0,1,0,0)}requestAnimationFrame(pvDraw)}
 requestAnimationFrame(pvDraw);
+
+/* ACHIEVEMENTS */
+const ACH=[];
+{const A=(id,n,d,g,p,r)=>ACH.push({id,n,d,g,p,r});
+const S=k=>P.st[k]||0;
+A('m1','First Swing','Mine 1 ore',1,()=>S('mine'),20);
+A('m2','Rock Hound','Mine 50 ore',50,()=>S('mine'),100);
+A('m3','Ore Machine','Mine 250 ore',250,()=>S('mine'),500);
+A('m4','Planet Eater','Mine 1000 ore',1000,()=>S('mine'),2500);
+A('r1','Lucky Strike','Mine 1 rare variant ore',1,()=>S('rare'),150);
+A('r2','Gem Hunter','Mine 10 rare variant ores',10,()=>S('rare'),1000);
+A('r3','Collector','Find 5 different rare variants',5,()=>P.rv.length,2500);
+A('r4','Complete Set','Find all '+VB+' rare variants',VB,()=>P.rv.length,25000);
+A('k1','First Blood','Defeat 1 enemy',1,()=>S('kill'),30);
+A('k2','Monster Slayer','Defeat 25 enemies',25,()=>S('kill'),400);
+A('k3','Exterminator','Defeat 100 enemies',100,()=>S('kill'),2000);
+A('b1','Boss Hunter','Defeat 1 boss',1,()=>P.trop.length,1000);
+A('b2','Boss Crusher','Defeat 4 bosses',4,()=>P.trop.length,6000);
+A('b3','Apex Slayer','Defeat all '+BS.length+' bosses',BS.length,()=>P.trop.length,50000);
+A('s1','Small Business','Earn 500cr from selling ore',500,()=>S('sold'),100);
+A('s2','Merchant','Earn 10,000cr from selling ore',1e4,()=>S('sold'),1000);
+A('s3','Tycoon','Earn 250,000cr from selling ore',25e4,()=>S('sold'),15000);
+A('s4','Billionaire Miner','Earn 5,000,000cr from selling ore',5e6,()=>S('sold'),100000);
+A('c1','Deep Pockets','Hold 10,000cr at once',1e4,()=>P.cr,500);
+A('l1','Apprentice','Reach Mining level 5',5,()=>lv(P.xp),200);
+A('l2','Journeyman','Reach Mining level 15',15,()=>lv(P.xp),1500);
+A('l3','Master Miner','Reach Mining level 30',30,()=>lv(P.xp),10000);
+A('l4','Warrior','Reach Fighting level 10',10,()=>lv(P.fx),800);
+A('l5','Guardian','Reach Blocking level 10',10,()=>lv(P.bx),800);
+A('g1','Better Tools','Own a Pickaxe upgrade tier 3',3,()=>P.g.p,300);
+A('g2','Suited Up','Own Suit tier 4',4,()=>P.g.s,1000);
+A('g3','Fully Kitted','Reach pickaxe tier 12',12,()=>P.g.p,30000);
+A('e1','Cave Explorer','Visit 4 different areas',4,()=>P.vis.length,300);
+A('e2','World Traveller','Visit all '+AR.length+' areas',AR.length,()=>P.vis.length,10000);
+A('h1','Home Builder','Place 3 base structures',3,()=>P.base.length,200);
+A('h2','Fortified','Place 12 base structures',12,()=>P.base.length,1000);
+A('h3','Squirrel','Bank 50 ore in lockers',50,()=>P.bank.length,300);
+A('d1','Learning Experience','Die for the first time',1,()=>S('death'),10);
+A('d2','Hard Head','Die 10 times',10,()=>S('death'),100);}
+function achCheck(){if(!playing||!P.ach)return;if(P.map&&!P.vis.includes(P.map)&&AI[P.map]!=null&&!/^b\d+$/.test(P.map))P.vis.push(P.map);
+ for(const a of ACH){if(P.ach.includes(a.id))continue;let v=0;try{v=a.p()}catch(e){}if(v>=a.g){P.ach.push(a.id);P.cr+=a.r;msg('ACHIEVEMENT: '+a.n+' (+'+a.r+'cr)','#0ff');banner('ACHIEVEMENT: '+a.n.toUpperCase(),'#0ff');sfx('lvl');ui()}}}
+setInterval(achCheck,800);
+function achTab(){const n=P.ach.length;let h='<p style="color:#ff0;margin:4px 0 2px">Achievements '+n+'/'+ACH.length+'</p><div style="height:6px;background:#2a241d;border:1px solid #000;margin-bottom:4px"><div style="height:100%;width:'+(n/ACH.length*100)+'%;background:#0cf"></div></div>';
+ const ord=ACH.slice().sort((a,b)=>P.ach.includes(a.id)-P.ach.includes(b.id));
+ for(const a of ord){const dn=P.ach.includes(a.id);let v=0;try{v=Math.min(a.g,a.p())}catch(e){}const pc=Math.round(v/a.g*100);
+  h+='<div class="rw" style="'+(dn?'opacity:.85':'')+'"><div style="flex:1"><u style="color:'+(dn?'#6f6':'#ff0')+'">'+(dn?'✔ ':'')+a.n+'</u><br><small>'+a.d+' · reward '+a.r.toLocaleString()+'cr</small>'+(dn?'':'<div style="height:5px;background:#2a241d;border:1px solid #000;margin-top:3px"><div style="height:100%;width:'+pc+'%;background:#0cf"></div></div><small>'+Math.floor(v).toLocaleString()+' / '+a.g.toLocaleString()+'</small>')+'</div></div>'}
+ return h}
 function render(){document.querySelectorAll('#tabs button').forEach(b=>b.className=b.dataset.t==tab?'on':'');let h='';const cap=trd();
  if(tab=='inv'){h='<div id="ig">';for(let i=0;i<28;i++){const o=P.inv[i];h+='<div class="sl"'+(o!=null?' onclick="drop('+i+')" style="cursor:pointer" title="Click to drop"':'')+'>'+(o!=null?`<i style="background:${OR[o].col}"></i><b>${OR[o].n[0]}</b>`:'')+'</div>'}h+=`</div><p>Ore value: ${val()}cr<br>Click an ore to drop it. Walk over it to pick it up. Ore is AT RISK until sold.</p>`}
  else if(tab=='gear'){const p=PK[P.g.p],s=SU[P.g.s],d=DG[P.g.d],sh=SH[P.g.sh];h=`<p><u style="color:#ff0">${p.n}</u><br>${desc('p',p)}<br>Durability ${P.du}/${p.du}</p><p><u style="color:#ff0">${s.n}</u><br>${desc('s',s)}</p><p><u style="color:#ff0">${d.n}</u><br>${desc('d',d)}</p><p><u style="color:#ff0">${sh.n}</u><br>${desc('sh',sh)}</p><p>Mining ${lvl()} · Fighting ${lv(P.fx)} · ${P.cls=='sw'?'Blocking':'Tactics'} ${lv(P.bx)}<br>Credits ${P.cr}<br>Boss trophies ${(P.trop||[]).length}/12 (+${3*(P.trop||[]).length}% dmg, +${6*(P.trop||[]).length} HP)</p>`}
@@ -751,6 +798,7 @@ function render(){document.querySelectorAll('#tabs button').forEach(b=>b.classNa
   const n=P.inv.length,rc=(PK[P.g.p].du-P.du)*2;h=row('Sell all ore',n+' ore in pack',val()+'cr','sell()',!n)+row('Repair pickaxe',`${P.du}/${PK[P.g.p].du} durability`,rc+'cr','repair()',!rc||P.cr<rc);
   for(const[k,l]of[['p','Pickaxe'],['s','Suit'],['sh','Shield']]){if(k=='sh'&&P.cls!='sw')continue;const nx=ARR[k][P.g[k]+1];h+=nx?row(nx.n,desc(k,nx),nx.c+'cr',`buy('${k}')`,P.cr<nx.c):row('Best '+l,'Already maxed','—','',1)}h+='<p style="color:#ff0">Weapons</p>';DG.forEach((w,i)=>{if(w.cl!=P.cls)return;const o=P.wown.includes(i);h+=row(w.n,desc('d',w),o?(P.g.d==i?'On':'Equip'):w.c+'cr',`wp(${i})`,P.g.d==i||(!o&&P.cr<w.c))});h+='<p style="color:#ff0">Base blueprints</p>';BP.forEach(b=>{const ow=P.bpo.includes(b.id);h+=row(b.n,b.d+' · to place: '+b.o.map(([t,n])=>n+' '+OR[t].n).join(', '),ow?'Owned':b.c+'cr',`bpBuy('${b.id}')`,ow||P.cr<b.c)})}}
 
+ else if(tab=='ach'){h=achTab()}
  else if(tab=='quest'){h='<p style="color:#ff0">Quests</p>';const q=QS[P.qi];if(!P.met)h+='<p style="font-weight:normal;color:#ddd">Walk up to the Unknown Stranger in the small capsule (bottom-right) and talk to him.</p>';else if(!q)h+='<p style="font-weight:normal;color:#ddd">All quests complete.</p>';else if(!P.qa)h+=row(q.n,'Not accepted. Talk to the Unknown Stranger to accept it.','New','',1);else{const p=qProg(q);h+=row(q.n,q.d+' · '+p+'/'+q.g+' · reward '+q.r+'cr'+(p>=q.g?'<br>Done! Talk to the Unknown Stranger to turn it in.':''),p>=q.g?'Ready':'Active','',1)}h+='<p style="font-weight:normal;color:#ddd">Completed '+P.qi+'/'+QS.length+'</p>';QS.slice(0,P.qi).forEach(x=>{h+='<p style="font-weight:normal;color:#9c9;margin:2px 0">✔ '+x.n+'</p>'})}
  else if(tab=='skill'){for(const c of['m','f','b']){const k=CAT[c][1],l=lv(P[k]);h+=`<p style="color:#ff0;margin:6px 0 0">${catName(c)} Lv ${l}<br><small style="font-weight:normal;color:#ddd">${P[k]}/${12*l*l} xp to next level</small></p>`;SKX(c).forEach((q,j)=>{const un=l>=q.lv;h+=row(q.n,un?q.d+' ('+q.cd/1000+'s cooldown)':'Unlocks at level '+q.lv,un?(P.sk[c]==j?'On':'Equip'):'Lv '+q.lv,`eqsk('${c}',${j})`,!un||P.sk[c]==j)})}h+='<p style="font-weight:normal">Keys: 1 mining · 2 fighting · 3 blocking/tactics, or tap the skill bar.</p>'}
  else if(tab=='base'){h='<p style="color:#ff0">Base (build anywhere, any area)</p>';BP.filter(b=>P.bpo.includes(b.id)).forEach(b=>{h+=row(b.n,b.d+' · needs '+b.o.map(([t,n])=>n+' '+OR[t].n+(P.inv.filter(q=>q==t).length>=n?'':' (short)')).join(', '),P.plc==b.id?'Cancel':'Place',`plc('${b.id}')`)});if(!P.bpo.length)h+='<p>Buy blueprints from '+dealer()+' first.</p>';h+=`<p>Placed ${P.base.length}/12 · Banked ore ${P.bank.length}</p>`;if(P.base.length){h+=row('Break mode',P.brk?'Click a structure on the map to remove it':'Remove structures one by one',P.brk?'Stop':'Break','brkMode()');P.base.forEach((b,i)=>{const B=BP.find(q=>q.id==b.id),A=AR.find(a=>a.id==(b.m||'surf'));h+=row(B.n,(A?A.n:'Boss lair')+' · tile '+b.x+','+b.y,'Remove',`brkAt(${i})`)})}h+=row('Clear base','Removes all structures','Clear','P.base=[];ui()',!P.base.length)}
@@ -799,7 +847,7 @@ function skin(t,i){if(!P.own[t].includes(i)){const s=(t=='s'?SS:PS)[i];if(s.boss
 function rq(){if(!conf){conf=1;ui();return}
  Object.keys(P).forEach(k=>delete P[k]);Object.assign(P,mkP());mkMaps();S.length=0;conf=0;tab='inv';
  document.getElementById('ch').innerHTML='';msg('Game restarted. A fresh planet awaits.','#0f0');playing=false;showClass();ui()}
-msg('Welcome to Dust Miner. The air out there will kill you. Mine, sell, upgrade.','#ff0');
+msg('Welcome to DustMiners. The air out there will kill you. Mine, sell, upgrade.','#ff0');
 msg('Tip: Pickaxes are loud. Stronger picks wake zombies from further away.','#0ff');
 function wp(i){if(!trd())return;if(!P.wown.includes(i)){const w=DG[i];if(P.cr<w.c)return;P.cr-=w.c;P.wown.push(i);msg('Bought '+w.n+'.','#0f0')}P.g.d=i;ui()}
 let shk=0,flash=0,BN=null,mute=false,AC=null;const PT=[],LC=['255,200,120','255,200,120','150,220,255','255,120,60','160,255,120','120,120,255','200,120,255','180,120,255','120,200,255','230,230,200','255,100,255','255,255,255'];
@@ -809,14 +857,14 @@ function sfx(k){if(mute)return;try{if(!ensureAC())return;const t=AC.currentTime,
  const m={mine:()=>tn(520,.08,'square',.04,260),hit:()=>tn(200,.12,'sawtooth',.06,90),hurt:()=>tn(130,.2,'sawtooth',.08,50),kill:()=>tn(300,.2,'square',.05,700),ore:()=>{tn(660,.1,'triangle',.07);setTimeout(()=>tn(990,.15,'triangle',.07),90)},lvl:()=>[523,659,784,1047].forEach((f,i)=>setTimeout(()=>tn(f,.25,'triangle',.08),i*110)),skill:()=>tn(150,.4,'sawtooth',.09,900),smash:()=>tn(80,.35,'square',.11,30),guard:()=>tn(900,.3,'sine',.07,400),sell:()=>{tn(880,.08,'square',.04);setTimeout(()=>tn(1320,.12,'square',.04),70)},crit:()=>tn(700,.2,'square',.08,1400),step:()=>tn(80+Math.random()*30,.04,'square',.012),click:()=>tn(1200,.03,'square',.03),pick:()=>{tn(500,.07,'triangle',.07);setTimeout(()=>tn(800,.1,'triangle',.07),60)},build:()=>{tn(180,.1,'square',.08,120);setTimeout(()=>tn(240,.1,'square',.06),90)},lock:()=>tn(300,.12,'triangle',.07,500),door:()=>tn(220,.3,'sawtooth',.06,90),low:()=>{tn(880,.1,'square',.05);setTimeout(()=>tn(880,.1,'square',.05),160)},death:()=>tn(260,.8,'sawtooth',.1,40),poison:()=>tn(220,.3,'triangle',.07,120),steal:()=>tn(900,.25,'sawtooth',.06,200),heal:()=>{tn(440,.15,'sine',.07,880);setTimeout(()=>tn(880,.2,'sine',.07,1320),120)},whirl:()=>tn(300,.45,'sawtooth',.08,900),drip:()=>tn(1400+Math.random()*400,.08,'sine',.03,500),cz:()=>tn(110,.25,'sawtooth',.07,70),cf:()=>tn(1000,.15,'square',.05,1800),cm:()=>tn(90,.3,'square',.08,50),cs:()=>tn(300,.25,'triangle',.07,120),ca:()=>tn(1500,.3,'sawtooth',.06,500),cw:()=>tn(500,.5,'sine',.08,1200),cb:()=>tn(250,.1,'square',.06,150),cp:()=>tn(400,.12,'square',.07,200)};(m[k]||(()=>0))()}catch(e){}}
 let slot=-1,playing=false,delc=-1;const mem={},FX=[];
 const sget=i=>{try{return localStorage.getItem('dm'+i)}catch(e){return mem[i]||null}},sset=(i,v)=>{try{v==null?localStorage.removeItem('dm'+i):localStorage.setItem('dm'+i,v)}catch(e){if(v==null)delete mem[i];else mem[i]=v}};
-const KEYS=['cr','inv','xp','fx','bx','g','du','own','eq','wown','sk','bpo','base','bank','cls','trop','st','qd','qi','qa','met','qb'];
+const KEYS=['cr','inv','xp','fx','bx','g','du','own','eq','wown','sk','bpo','base','bank','cls','trop','st','qd','qi','qa','met','qb','ach','vis','rv'];
 function save(){if(slot<0||!playing)return;const o={};KEYS.forEach(k=>o[k]=P[k]);sset(slot,JSON.stringify(o))}
 function mkMaps(){for(const k in maps)delete maps[k];if(story){const M=build(0);M.g[10][W-1]=1;M.g[11][W-1]=1;M.g[H-1][16]=1;maps.surf=M;for(const k in maps)if(k!='surf')delete maps[k];if(P.qi>=3)openBiome()}else AR.forEach((a,k)=>maps[a.id]=build(k))}
 function openBiome(){if(!story||maps[AR[1].id])return;const S0=maps.surf;S0.g[10][W-1]=3;S0.g[11][W-1]=3;const M=build(1);M.g[10][W-1]=1;M.g[11][W-1]=1;M.g[H-1][16]=1;maps[AR[1].id]=M;delete maps.b1}
 function startStory(){story=1;mp=0;showMenu()}
 function loadSlot(i){slot=i;const d=sget(i);Object.keys(P).forEach(k=>delete P[k]);Object.assign(P,mkP());if(d){try{Object.assign(P,JSON.parse(d))}catch(e){}}
  P.mh=30+12*P.g.s+6*(P.trop||[]).length;if(d&&!P.cls){P.cls='sw';P.g.d=0;P.wown=[0]}P.hp=P.mh;P.o2=SU[P.g.s].tank;mkMaps();S.length=0;FX.length=0;conf=0;tab='inv';
- document.getElementById('ch').innerHTML='';msg(d?'Welcome back, miner. Loaded file '+(i%10+1)+'.':'Welcome to Dust Miner. The air out there will kill you. Mine, sell, upgrade.','#ff0');msg('Press 1, 2, 3 to use skills. You unlock one every 5 levels.','#0ff');if(story)msg('STORY MODE: you are stranded on the Dust Surface with only your capsule. The rest of the world is sealed off for now.','#fc0');
+ document.getElementById('ch').innerHTML='';msg(d?'Welcome back, miner. Loaded file '+(i%10+1)+'.':'Welcome to DustMiners. The air out there will kill you. Mine, sell, upgrade.','#ff0');msg('Press 1, 2, 3 to use skills. You unlock one every 5 levels.','#0ff');if(story)msg('STORY MODE: you are stranded on the Dust Surface with only your capsule. The rest of the world is sealed off for now.','#fc0');
  if(!P.cls)showClass();else if(mp)showLobby();else startPlay()}
 function showClass(){$('menu').style.display='flex';$('slots').style.display='none';lobEl().style.display='none';mmEl().style.display='none';$('cls').style.display='block'}
 function pickCls(c){const si={sw:0,sp:1,rn:2}[c];P.cls=c;P.g.d=si;P.wown=[si];$('cls').style.display='none';if(RM)startPlay();else if(mp)showLobby();else startPlay()}
