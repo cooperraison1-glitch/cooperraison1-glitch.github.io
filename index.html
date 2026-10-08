@@ -86,13 +86,30 @@ canvas{border-radius:12px;border:2px solid var(--line);box-shadow:0 8px 28px rgb
 #unw label{display:block;font-size:11px;letter-spacing:1px;color:var(--amber);margin-bottom:4px;text-transform:uppercase}
 #unw input{display:block;width:160px;max-width:55vw;box-sizing:border-box;padding:6px 8px;background:#2a241d;color:#fff;border:2px solid #2e271f;border-radius:6px;font:inherit}
 #mm[style*="display: none"]~#unw{display:none}
-</style></head><body><div id="menu"><h1>DUST MINER</h1><p style="color:#f93;letter-spacing:3px;margin:0">MINE · FIGHT · SURVIVE THE DUST</p><div id="mm"><button class="big" onclick="pickMode(0)">Singleplayer</button><button class="big" onclick="startStory()">Story Mode</button><button class="big" onclick="pickMode(1)">Multiplayer</button></div><div id="unw"><label for="un">Username</label><input id="un" maxlength="16" autocomplete="off" spellcheck="false" placeholder="Enter a name"></div><div id="slots" style="display:none"></div>
+#stgb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:999}
+#stg{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:1000;width:min(520px,94vw);max-height:90vh;overflow-y:auto;box-sizing:border-box;background:#3a332b;background:var(--glass,#3a332b);border:2px solid #000;border:2px solid var(--line,#000);border-radius:14px;box-shadow:0 12px 36px rgba(0,0,0,.65),0 0 0 3px #1c1712;color:#ddd;padding:10px 14px;text-align:left;animation:pop .18s ease-out}
+#stg h2{margin:0 0 8px;color:#ff0;font-size:20px;text-align:center}
+#stg .st{display:flex;gap:4px;margin-bottom:6px}
+#stg button{background:#463e34;color:#ff0;border:1px solid #000;border-radius:6px;font:inherit;padding:5px 10px;cursor:pointer}
+#stg .st button{flex:1}
+#stg button.on{background:#ff981f;color:#1b1712}
+#stg .sr{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #463e34;padding:6px 0}
+#stg .sr label{color:#ff0;font-weight:bold}
+#stg .sr small{color:#bbb;font-weight:normal}
+#stg .sr input[type=range]{width:42%;accent-color:#ff981f}
+#stg .v{width:28px;text-align:right;color:#fff}
+#stg .tg{min-width:56px}
+#stg .kb{min-width:110px}
+#stg .kb.cap{outline:2px solid #0ff;color:#0ff}
+#stg .sf{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+#stg .sn{font-weight:normal;font-size:12px;color:#bbb;margin:6px 0}
+</style></head><body><div id="menu"><h1>DUST MINER</h1><p style="color:#f93;letter-spacing:3px;margin:0">MINE · FIGHT · SURVIVE THE DUST</p><div id="mm"><button class="big" onclick="pickMode(0)">Singleplayer</button><button class="big" onclick="startStory()">Story Mode</button><button class="big" onclick="pickMode(1)">Multiplayer</button><button class="big" onclick="openSet()">Settings</button></div><div id="unw"><label for="un">Username</label><input id="un" maxlength="16" autocomplete="off" spellcheck="false" placeholder="Enter a name"></div><div id="slots" style="display:none"></div>
 <div id="cls" style="display:none"><p style="font-size:20px;color:#ff0">Choose your class</p>
 <div class="slot"><u>Swordsman</u><br><small>Sword and shield. Tough close-range fighter. The only class that can use shields.</small><div><button onclick="pickCls('sw')">Swordsman</button></div></div>
 <div class="slot"><u>Spearman</u><br><small>Spears only. Attacks from up to 3 tiles away.</small><div><button onclick="pickCls('sp')">Spearman</button></div></div>
 <div class="slot"><u>Ranger</u><br><small>Bows only. Click an enemy to shoot it from up to 5 tiles away.</small><div><button onclick="pickCls('rn')">Ranger</button></div></div></div>
 <div id="lob" style="display:none"><p>Create or join a room</p><input id="rc" placeholder="Room code"><input id="rp" placeholder="Password (optional)"><label><input type="checkbox" id="rpub"> Public room</label><div><button class="big" style="font-size:16px" onclick="createRoom()">Create</button><button class="big" style="font-size:16px" onclick="joinRoom()">Join</button></div><p style="margin:2px">Public rooms</p><div id="pl"></div><p id="ls" style="color:#f66"></p><button class="big" style="font-size:13px" onclick="showMain()">Back</button></div><p style="color:#a99;font-weight:normal;font-size:12px">Saves are stored in this browser.</p></div><div id="lkm" style="display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:30;background:#5d5447;border:3px solid #2e271f;padding:10px 12px;width:min(460px,94vw);max-height:88vh;overflow-y:auto;color:#ddd;box-shadow:0 0 0 2px #000"></div><div id="pvp" style="display:none;position:fixed;left:8px;top:60px;z-index:20;background:#5d5447;border:3px solid #2e271f;padding:10px 12px;max-width:min(300px,90vw);text-align:left;color:#ff0;box-shadow:0 0 0 2px #000"><p id="pvpt" style="margin:0 0 8px;white-space:pre-line"></p><button class="big" style="font-size:14px;padding:6px 18px" onclick="pvpAns(1)">Yes</button><button class="big" style="font-size:14px;padding:6px 18px" onclick="pvpAns(0)">No</button></div>
-<div id="dlg"></div><div id="w">
+<div id="stgb" onclick="closeSet()"></div><div id="stg"></div><div id="dlg"></div><div id="w">
 <div id="top"><canvas id="c"></canvas><div id="side"><div id="tabs"><button data-t="inv" onclick="T('inv')">Pack</button><button data-t="gear" onclick="T('gear')">Gear</button><button data-t="shop" onclick="T('shop')">Trade</button><button data-t="skill" onclick="T('skill')">Skills</button><button data-t="base" onclick="T('base')">Base</button><button data-t="skin" onclick="T('skin')">Skins</button><button data-t="quest" onclick="T('quest')">Quests</button><button data-t="set" onclick="T('set')">Menu</button></div><div id="pc"></div></div></div>
 <div id="ch"></div><div id="help">Click to move · click rocks to mine · click enemies to fight · keys 1/2/3 use skills · the Unknown Stranger sits in the small capsule bottom-right</div></div>
 <script>
@@ -416,7 +433,7 @@ function path(M,sx,sy,goal){const key=(a,b)=>a+','+b,prev={[key(sx,sy)]:null},q=
  const bl=new Set(M.ores.filter(o=>o.rs<=NOW).map(o=>key(o.x,o.y)));bases().forEach(q=>{if(q.id=='wl'&&(q.m||'surf')==P.map)bl.add(key(q.x,q.y))});if(M.npc)bl.add(key(M.npc.x,M.npc.y));
  while(h<q.length){const[a,b]=q[h++];if(goal(a,b)){const r=[];let k=key(a,b);while(prev[k]){r.unshift(prev[k].s);k=prev[k].f}return r}
   for(const[dx,dy]of D){const i=a+dx,j=b+dy,k=key(i,j);if(i<0||j<0||i>=W||j>=H||M.g[j][i]==1||k in prev||bl.has(k))continue;prev[k]={f:key(a,b),s:[i,j]};q.push([i,j])}}return null}
-const splat=(i,j,v,c)=>{S.push({x:i,y:j,v,t:NOW,c});burst(i*T_+12,j*T_+12,c||(v?'#f55':'#59f'),v?8:3,110,500)};
+const splat=(i,j,v,c)=>{if(CFG.dmg)S.push({x:i,y:j,v,t:NOW,c});burst(i*T_+12,j*T_+12,c||(v?'#f55':'#59f'),v?8:3,110,500)};
 function die(){{const L=maps[P.map];if(L&&/^b\d+$/.test(P.map)){L.dd=1;if(RM)RM.emit('ldie',{m:P.map})}}if(RM&&P.duel)RM.emit('pvpend',{to:P.duel,from:uid});shk=14;flash=1;banner('YOU DIED','#f33');sfx('death');const pk=RM&&P.lh&&NOW-P.lh.t<8000?P.lh.u:null,cl=P.cls;
  if(pk)RM.emit('loot',{to:pk,inv:P.inv.slice(0,28),cr:0});
  msg('Oh dear, you are dead!','#f33');const n=P.inv.length;P.inv=[];msg(pk?(n?'You were killed by a player. They took your pack ('+n+' ore). Everything else is safe.':'You were killed by a player, but your pack was empty.'):(n?'You dropped '+n+' ore. Skins and credits are safe.':'You carried nothing of value.'),pk?'#f33':'#ff0');P.duel=null;P.map='surf';P.x=4;P.y=11;P.path=[];P.tg=null;P.hp=P.mh;P.o2=SU[P.g.s].tank;ui()}
@@ -560,7 +577,7 @@ function click(i,j){const M=maps[P.map];P.mp=0;P.path=[];P.tg=null;
  if(M.npc&&M.npc.x==i&&M.npc.y==j){P.tg={k:'npc',r:M.npc};return}
  if(walk(M,i,j)){const p=path(M,P.x,P.y,(a,b)=>a==i&&b==j);if(p)P.path=p}}
 cv.addEventListener('pointerdown',e=>{if(!playing)return;const r=cv.getBoundingClientRect(),px=(e.clientX-r.left)/r.width*cv.width,py=(e.clientY-r.top)/r.height*cv.height;if(py>cv.height-34&&px<324){useSk(['m','f','b'][Math.min(2,Math.floor((px-6)/106))]);return}click(Math.floor(px/T_),Math.floor(py/T_))});
-addEventListener('keydown',e=>{const c={1:'m',2:'f',3:'b'}[e.key];if(playing&&c)useSk(c)});
+
 /* ---------- drawing ---------- */
 function txt(s,px,py,c,al='center',sz=11){x.font='bold '+sz+'px Verdana,sans-serif';x.textAlign=al;x.fillStyle='#000';x.fillText(s,px+1,py+1);x.fillStyle=c;x.fillText(s,px,py)}
 const WT=[['#9a5a36','#6b3a20','#ff8a4a'],['#d4d9df','#8f98a3','#ffffff'],['#35e0ff','#1a9ab5','#35e0ff'],['#ff7a2a','#ffd24a','#ff5a1f'],['#b060ff','#6a2aaa','#c070ff'],['#4a3a78','#b08aff','#7a5ac0'],['#ff5af0','#a02a98','#ff40ff'],['#ffffff','#ffd24a','#fff1a0']];
@@ -654,7 +671,7 @@ function crit(k,px,py,now){const c=CR[k].c,b=Math.sin(now/200)*1.5;if(k=='z')ret
  else if(k=='a'){x.fillRect(px+8,py+1,8,22);x.fillStyle=c;x.fillRect(px+9,py+2,6,20);x.fillStyle='#f33';x.fillRect(px+11,py+5,3,3);x.fillStyle='#000';x.fillRect(px+3,py+9,6,2);x.fillRect(px+15,py+9,6,2)}
  else if('otkrh'.includes(k)){x.fillRect(px+1,py+2,22,21);x.fillStyle=c;x.fillRect(px+2,py+3,20,19);x.fillStyle='#000';x.fillRect(px+5,py+8,5,5);x.fillRect(px+14,py+8,5,5);x.fillStyle=k=='t'?'#ff0':k=='r'?'#0ff':'#f33';x.fillRect(px+6,py+9,3,3);x.fillRect(px+15,py+9,3,3);x.fillStyle='#000';x.fillRect(px+6,py+16,12,3);if(k=='o'||k=='h'){x.fillRect(px+3,py,4,4);x.fillRect(px+17,py,4,4)}}
  else{x.globalAlpha=.75;x.fillStyle=c;x.fillRect(px+5,py+3+b,14,16);for(let i=0;i<3;i++)x.fillRect(px+5+i*5,py+19+b,4,3+(i+Math.floor(now/200))%2*2);x.globalAlpha=1;x.fillStyle='#fff';x.fillRect(px+8,py+8+b,3,3);x.fillRect(px+14,py+8+b,3,3)}}
-function draw(now){const dt=Math.min(.05,(now-(draw.l||now))/1000);draw.l=now;x.fillStyle='#000';x.fillRect(0,0,cv.width,cv.height);x.save();if(shk>0){x.translate((Math.random()-.5)*shk,(Math.random()-.5)*shk);shk=Math.max(0,shk-dt*30)}const M=maps[P.map],cave=P.map!='surf',Q=maps[P.map].pal||AR[AI[P.map]];x.fillStyle='#000';x.fillRect(0,0,cv.width,cv.height);
+function draw(now){const dt=Math.min(.05,(now-(draw.l||now))/1000);draw.l=now;x.fillStyle='#000';x.fillRect(0,0,cv.width,cv.height);x.save();if(shk>0){x.translate((Math.random()-.5)*shk*CFG.shake/100,(Math.random()-.5)*shk*CFG.shake/100);shk=Math.max(0,shk-dt*30)}const M=maps[P.map],cave=P.map!='surf',Q=maps[P.map].pal||AR[AI[P.map]];x.fillStyle='#000';x.fillRect(0,0,cv.width,cv.height);
  for(let j=0;j<H;j++)for(let i=0;i<W;i++){const v=M.g[j][i],h=hs(i,j),px=i*T_,py=j*T_;
   x.fillStyle=v==1?Q.w:v==2?((i+j)%2?'#6a727c':'#616972'):v==5?((i+j)%2?'#59606b':'#505762'):v==3?'#c9a227':v==4?'#a01818':Q.f[h&1];x.fillRect(px,py,T_,T_);
   x.fillStyle='rgba(0,0,0,.18)';x.fillRect(px+h%18,py+(h>>4)%18,3,3);x.fillRect(px+(h>>8)%20,py+(h>>12)%20,2,2);
@@ -686,14 +703,14 @@ function draw(now){const dt=Math.min(.05,(now-(draw.l||now))/1000);draw.l=now;x.
  x.restore();
  {const bm=M.mobs.find(m=>m.boss&&!m.dead);if(bm){x.fillStyle='#000';x.fillRect(cv.width/2-150,50,300,16);x.fillStyle='#600';x.fillRect(cv.width/2-148,52,296,12);x.fillStyle='#e22';x.fillRect(cv.width/2-148,52,296*Math.max(0,bm.hp)/bm.mh,12);txt(bm.name,cv.width/2,47,'#f66','center',12)}}
  if(inBoss())txt(P.cls=='rn'?'LAIR BUFF: bow range 10 tiles':P.cls=='sp'?'LAIR BUFF: spear reach 5 tiles':'LAIR BUFF: attacking 20% faster',cv.width/2,cv.height-40,'#fc0','center',11);
- if(flash>0){x.fillStyle='rgba(255,0,0,'+flash*.45+')';x.fillRect(0,0,cv.width,cv.height);flash=Math.max(0,flash-dt*1.5)}
+ if(flash>0){if(CFG.flash){x.fillStyle='rgba(255,0,0,'+flash*.45+')';x.fillRect(0,0,cv.width,cv.height)}flash=Math.max(0,flash-dt*1.5)}
  if(!inCap()&&!strCap()&&P.o2<SU[P.g.s].tank*.25){x.fillStyle='rgba(0,90,255,'+(.1+.06*Math.sin(now/150))+')';x.fillRect(0,0,cv.width,cv.height)}
  if(BN){const a=now-BN.s;if(a>2200)BN=null;else{x.globalAlpha=Math.min(1,(2200-a)/600);txt(BN.t,cv.width/2,150-a/60,BN.c,'center',28+Math.min(8,a/40));x.globalAlpha=1}}
  
  const rr=(a,b,w,h,r)=>{x.beginPath();if(x.roundRect)x.roundRect(a,b,w,h,r);else x.rect(a,b,w,h)};
  const bar=(bx,by,w,h,f,c1,c2,lab)=>{x.fillStyle='rgba(0,0,0,.6)';rr(bx,by,w,h,h/2);x.fill();const fw=Math.max(0,Math.min(1,f))*(w-2);if(fw>1){const g=x.createLinearGradient(0,by,0,by+h);g.addColorStop(0,c1);g.addColorStop(1,c2);x.fillStyle=g;rr(bx+1,by+1,fw,h-2,(h-2)/2);x.fill();x.fillStyle='rgba(255,255,255,.22)';rr(bx+2,by+2,Math.max(0,fw-2),(h-2)/3,2);x.fill()}x.strokeStyle='rgba(255,255,255,.28)';x.lineWidth=1;rr(bx,by,w,h,h/2);x.stroke();txt(lab,bx+w/2,by+h-3,'#fff','center',10)};
  const pill=(bx,by,w,h)=>{x.fillStyle='rgba(18,13,8,.72)';rr(bx,by,w,h,8);x.fill();x.strokeStyle='rgba(255,152,31,.45)';x.lineWidth=1.5;rr(bx,by,w,h,8);x.stroke()};
- ['m','f','b'].forEach((c,i)=>{const j=P.sk[c],q=j>=0?SKX(c)[j]:null,qx=6+i*108,qy=cv.height-38,qw=104,qh=32,rdy=!q||now>=P.cd[c];pill(qx,qy,qw,qh);if(q&&now<P.cd[c]){x.save();rr(qx,qy,qw,qh,8);x.clip();x.fillStyle='rgba(255,70,0,.38)';x.fillRect(qx,qy,qw*(P.cd[c]-now)/q.cd,qh);x.restore()}else if(q){x.strokeStyle='rgba(255,230,80,.9)';x.lineWidth=1.5;rr(qx,qy,qw,qh,8);x.stroke()}x.fillStyle=q?'#ff981f':'#444';x.beginPath();x.arc(qx+14,qy+qh/2,9,0,7);x.fill();txt(''+(i+1),qx+14,qy+qh/2+4,'#1b1712','center',12);txt(q?q.n:'Locked',qx+60,qy+(q&&now<P.cd[c]?15:qh/2+4),q?(rdy?'#ff0':'#ccc'):'#888','center',10);if(q&&now<P.cd[c])txt(((P.cd[c]-now)/1000).toFixed(1)+'s',qx+60,qy+27,'#fa8','center',9)});
+ ['m','f','b'].forEach((c,i)=>{const j=P.sk[c],q=j>=0?SKX(c)[j]:null,qx=6+i*108,qy=cv.height-38,qw=104,qh=32,rdy=!q||now>=P.cd[c];pill(qx,qy,qw,qh);if(q&&now<P.cd[c]){x.save();rr(qx,qy,qw,qh,8);x.clip();x.fillStyle='rgba(255,70,0,.38)';x.fillRect(qx,qy,qw*(P.cd[c]-now)/q.cd,qh);x.restore()}else if(q){x.strokeStyle='rgba(255,230,80,.9)';x.lineWidth=1.5;rr(qx,qy,qw,qh,8);x.stroke()}x.fillStyle=q?'#ff981f':'#444';x.beginPath();x.arc(qx+14,qy+qh/2,9,0,7);x.fill();txt(keyShort(CFG.keys['sk'+(i+1)]),qx+14,qy+qh/2+4,'#1b1712','center',keyShort(CFG.keys['sk'+(i+1)]).length>1?8:12);txt(q?q.n:'Locked',qx+60,qy+(q&&now<P.cd[c]?15:qh/2+4),q?(rdy?'#ff0':'#ccc'):'#888','center',10);if(q&&now<P.cd[c])txt(((P.cd[c]-now)/1000).toFixed(1)+'s',qx+60,qy+27,'#fa8','center',9)});
  const su=SU[P.g.s];pill(6,6,134,40);
  bar(11,10,124,14,Math.max(0,P.hp)/P.mh,'#5e5','#1a8a1a','HP '+Math.ceil(P.hp)+'/'+P.mh);
  bar(11,28,124,14,P.o2/su.tank,'#6bf','#1f5fc4','O2 '+Math.ceil(P.o2)+'/'+su.tank);
@@ -733,7 +750,7 @@ function render(){document.querySelectorAll('#tabs button').forEach(b=>b.classNa
  else if(tab=='quest'){h='<p style="color:#ff0">Quests</p>';const q=QS[P.qi];if(!P.met)h+='<p style="font-weight:normal;color:#ddd">Walk up to the Unknown Stranger in the small capsule (bottom-right) and talk to him.</p>';else if(!q)h+='<p style="font-weight:normal;color:#ddd">All quests complete.</p>';else if(!P.qa)h+=row(q.n,'Not accepted. Talk to the Unknown Stranger to accept it.','New','',1);else{const p=qProg(q);h+=row(q.n,q.d+' · '+p+'/'+q.g+' · reward '+q.r+'cr'+(p>=q.g?'<br>Done! Talk to the Unknown Stranger to turn it in.':''),p>=q.g?'Ready':'Active','',1)}h+='<p style="font-weight:normal;color:#ddd">Completed '+P.qi+'/'+QS.length+'</p>';QS.slice(0,P.qi).forEach(x=>{h+='<p style="font-weight:normal;color:#9c9;margin:2px 0">✔ '+x.n+'</p>'})}
  else if(tab=='skill'){for(const c of['m','f','b']){const k=CAT[c][1],l=lv(P[k]);h+=`<p style="color:#ff0;margin:6px 0 0">${catName(c)} Lv ${l}<br><small style="font-weight:normal;color:#ddd">${P[k]}/${12*l*l} xp to next level</small></p>`;SKX(c).forEach((q,j)=>{const un=l>=q.lv;h+=row(q.n,un?q.d+' ('+q.cd/1000+'s cooldown)':'Unlocks at level '+q.lv,un?(P.sk[c]==j?'On':'Equip'):'Lv '+q.lv,`eqsk('${c}',${j})`,!un||P.sk[c]==j)})}h+='<p style="font-weight:normal">Keys: 1 mining · 2 fighting · 3 blocking/tactics, or tap the skill bar.</p>'}
  else if(tab=='base'){h='<p style="color:#ff0">Base (build anywhere, any area)</p>';BP.filter(b=>P.bpo.includes(b.id)).forEach(b=>{h+=row(b.n,b.d+' · needs '+b.o.map(([t,n])=>n+' '+OR[t].n+(P.inv.filter(q=>q==t).length>=n?'':' (short)')).join(', '),P.plc==b.id?'Cancel':'Place',`plc('${b.id}')`)});if(!P.bpo.length)h+='<p>Buy blueprints from '+dealer()+' first.</p>';h+=`<p>Placed ${P.base.length}/12 · Banked ore ${P.bank.length}</p>`;if(P.base.length){h+=row('Break mode',P.brk?'Click a structure on the map to remove it':'Remove structures one by one',P.brk?'Stop':'Break','brkMode()');P.base.forEach((b,i)=>{const B=BP.find(q=>q.id==b.id),A=AR.find(a=>a.id==(b.m||'surf'));h+=row(B.n,(A?A.n:'Boss lair')+' · tile '+b.x+','+b.y,'Remove',`brkAt(${i})`)})}h+=row('Clear base','Removes all structures','Clear','P.base=[];ui()',!P.base.length)}
- else if(tab=='set'){h='<p style="color:#ff0">Settings</p>'+row('Sound',mute?'Muted':'Effects on','Toggle','mute=!mute;ui()')+row('Ambience',amb?'On (wind, caves, chimes)':'Off','Toggle','amb=!amb;ui()')+row('Save & quit','Auto-saves as you play','Quit','quitG()')+row('Restart game','Wipes this save file and builds new maps',conf?'Confirm':'Restart','rq()')+(conf?row('Keep playing','Cancel the restart','Cancel','conf=0;ui()'):'')+'<p style="font-weight:normal;color:#ddd">Controls: click ground to move, rocks to mine, enemies to fight, '+(story?'the Unknown Stranger':'Vex')+' to trade. Stay near the capsule when oxygen runs low.</p>'}
+ else if(tab=='set'){h='<p style="color:#ff0">Settings</p>'+row('Settings','Volume, keybinds, display options','Open','openSet()')+row('Sound',mute?'Muted':'On','Toggle','setMute(!mute)')+row('Save & quit','Auto-saves as you play','Quit','quitG()')+row('Restart game','Wipes this save file and builds new maps',conf?'Confirm':'Restart','rq()')+(conf?row('Keep playing','Cancel the restart','Cancel','conf=0;ui()'):'')+'<p style="font-weight:normal;color:#ddd">Controls: click ground to move, rocks to mine, enemies to fight, '+(story?'the Unknown Stranger':'Vex')+' to trade. Stay near the capsule when oxygen runs low.</p>'}
  else{if(!cap)h='<p>Skins can only be bought in the capsule. Skins are soulbound: nobody can loot them.</p>';
   if(pv){const q=(pv.t=='s'?SS:PS)[pv.i];h+=`<div id=\"pvw\"><canvas id=\"pvc\" width=\"120\" height=\"132\"></canvas><b style=\"color:#ff0\">${q.n}</b><br><small style=\"font-weight:normal;color:#ddd\">Preview: ${pv.t=='s'?'wearing your equipped pickaxe':'on your equipped suit'}</small><br><button class=\"pvb\" style=\"background:#463e34;color:#ff0;border:1px solid #000;font:inherit;font-size:11px;padding:1px 8px;cursor:pointer\" onclick=\"pvSet(null)\">Close preview</button></div>`}
   for(const[t,l,A]of[['s','Suit',SS],['p','Pickaxe',PS]]){h+=`<p style=\"color:#ff0\">${l} skins</p>`;A.forEach((s,i)=>{const own=P.own[t].includes(i),st=own?(P.eq[t]==i?'Equipped':'Owned'):(s.boss!=null?'Boss reward: defeat '+BS[s.boss][0]:'Soulbound'),lb=own?(P.eq[t]==i?'On':'Equip'):(s.boss!=null?'Locked':s.c+'cr'),dis=(!own&&(s.boss!=null||!cap||P.cr<s.c))||P.eq[t]==i;h+=`<div class=\"rw\"><div><u><span style=\"color:${s.col}\">■</span> ${s.n}</u><br><small>${st}</small><br><button class=\"pvb\" onclick=\"pvSet('${t}',${i})\">Preview</button></div><button ${dis?'disabled':''} onclick=\"skin('${t}',${i})\">${lb}</button></div>`})}}
@@ -782,9 +799,9 @@ msg('Welcome to Dust Miner. The air out there will kill you. Mine, sell, upgrade
 msg('Tip: Pickaxes are loud. Stronger picks wake zombies from further away.','#0ff');
 function wp(i){if(!trd())return;if(!P.wown.includes(i)){const w=DG[i];if(P.cr<w.c)return;P.cr-=w.c;P.wown.push(i);msg('Bought '+w.n+'.','#0f0')}P.g.d=i;ui()}
 let shk=0,flash=0,BN=null,mute=false,AC=null;const PT=[],LC=['255,200,120','255,200,120','150,220,255','255,120,60','160,255,120','120,120,255','200,120,255','180,120,255','120,200,255','230,230,200','255,100,255','255,255,255'];
-function burst(px,py,c,n,sp,l){for(let i=0;i<n&&PT.length<500;i++){const a=Math.random()*6.28,v=(.3+Math.random())*sp;PT.push({x:px,y:py,vx:Math.cos(a)*v,vy:Math.sin(a)*v-sp*.3,t:NOW,l:l*(.6+Math.random()*.8),c})}}
+function burst(px,py,c,n,sp,l){if(!CFG.part)return;for(let i=0;i<n&&PT.length<500;i++){const a=Math.random()*6.28,v=(.3+Math.random())*sp;PT.push({x:px,y:py,vx:Math.cos(a)*v,vy:Math.sin(a)*v-sp*.3,t:NOW,l:l*(.6+Math.random()*.8),c})}}
 function banner(t,c){BN={t,c,s:NOW}}
-function sfx(k){if(mute)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state=='suspended')AC.resume();const t=AC.currentTime,tn=(f,d,ty,v,f2)=>{const o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d)};
+function sfx(k){if(mute)return;try{if(!ensureAC())return;const t=AC.currentTime,tn=(f,d,ty,v,f2)=>{const o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(BUS.s);o.start(t);o.stop(t+d)};
  const m={mine:()=>tn(520,.08,'square',.04,260),hit:()=>tn(200,.12,'sawtooth',.06,90),hurt:()=>tn(130,.2,'sawtooth',.08,50),kill:()=>tn(300,.2,'square',.05,700),ore:()=>{tn(660,.1,'triangle',.07);setTimeout(()=>tn(990,.15,'triangle',.07),90)},lvl:()=>[523,659,784,1047].forEach((f,i)=>setTimeout(()=>tn(f,.25,'triangle',.08),i*110)),skill:()=>tn(150,.4,'sawtooth',.09,900),smash:()=>tn(80,.35,'square',.11,30),guard:()=>tn(900,.3,'sine',.07,400),sell:()=>{tn(880,.08,'square',.04);setTimeout(()=>tn(1320,.12,'square',.04),70)},crit:()=>tn(700,.2,'square',.08,1400),step:()=>tn(80+Math.random()*30,.04,'square',.012),click:()=>tn(1200,.03,'square',.03),pick:()=>{tn(500,.07,'triangle',.07);setTimeout(()=>tn(800,.1,'triangle',.07),60)},build:()=>{tn(180,.1,'square',.08,120);setTimeout(()=>tn(240,.1,'square',.06),90)},lock:()=>tn(300,.12,'triangle',.07,500),door:()=>tn(220,.3,'sawtooth',.06,90),low:()=>{tn(880,.1,'square',.05);setTimeout(()=>tn(880,.1,'square',.05),160)},death:()=>tn(260,.8,'sawtooth',.1,40),poison:()=>tn(220,.3,'triangle',.07,120),steal:()=>tn(900,.25,'sawtooth',.06,200),heal:()=>{tn(440,.15,'sine',.07,880);setTimeout(()=>tn(880,.2,'sine',.07,1320),120)},whirl:()=>tn(300,.45,'sawtooth',.08,900),drip:()=>tn(1400+Math.random()*400,.08,'sine',.03,500),cz:()=>tn(110,.25,'sawtooth',.07,70),cf:()=>tn(1000,.15,'square',.05,1800),cm:()=>tn(90,.3,'square',.08,50),cs:()=>tn(300,.25,'triangle',.07,120),ca:()=>tn(1500,.3,'sawtooth',.06,500),cw:()=>tn(500,.5,'sine',.08,1200),cb:()=>tn(250,.1,'square',.06,150),cp:()=>tn(400,.12,'square',.07,200)};(m[k]||(()=>0))()}catch(e){}}
 let slot=-1,playing=false,delc=-1;const mem={},FX=[];
 const sget=i=>{try{return localStorage.getItem('dm'+i)}catch(e){return mem[i]||null}},sset=(i,v)=>{try{v==null?localStorage.removeItem('dm'+i):localStorage.setItem('dm'+i,v)}catch(e){if(v==null)delete mem[i];else mem[i]=v}};
@@ -819,7 +836,7 @@ function sb(i,sd){const o=Math.random;let t=(sd+i*7919)>>>0;Math.random=()=>{t=(
 function seedWorld(c){const sd=+hh(c);AR.forEach((a,k)=>maps[a.id]=sb(k,sd))}
 const bases=()=>P.base.concat(...Object.values(RP).map(r=>r.b||[]));
 const hh=q=>{let h=5381;for(const c of q)h=((h<<5)+h+c.charCodeAt(0))>>>0;return ''+h};
-function startPlay(){playing=true;{const qb=document.querySelector('#tabs button[data-t=quest]');if(qb)qb.style.display=story?'':'none';if(!story&&tab=='quest')tab='inv';const hp=document.getElementById('help');if(hp)hp.textContent='Click to move · click rocks to mine · click enemies to fight · keys 1/2/3 use skills · '+(story?'the Unknown Stranger sits in the small capsule bottom-right':'Vex the dealer waits in the big capsule on the left')}$('menu').style.display='none';save();ui();if(story)banner('STORY MODE','#fc0')}
+function startPlay(){playing=true;{const qb=document.querySelector('#tabs button[data-t=quest]');if(qb)qb.style.display=story?'':'none';if(!story&&tab=='quest')tab='inv';const hp=document.getElementById('help');if(hp)hp.textContent=helpTxt()}$('menu').style.display='none';save();ui();if(story)banner('STORY MODE','#fc0')}
 function showMain(){story=0;playing=false;leaveRoom();$('cls').style.display='none';$('menu').style.display='flex';mmEl().style.display='flex';$('slots').style.display='none';lobEl().style.display='none'}
 function pickMode(m){story=0;mp=m;showMenu()}
 async function showLobby(){$('menu').style.display='flex';$('slots').style.display='none';lobEl().style.display='block';lst('');const pl=$('pl');pl.innerHTML='';
@@ -850,8 +867,8 @@ function leaveRoom(){$('pvp').style.display='none';clearInterval(hbT);if(RM){try
 function mpTick(t){if(isHost&&t>(mpTick.s||0)){mpTick.s=t+250;const ids=new Set([P.map]);for(const k in RP)ids.add(RP[k].m);ids.forEach(id=>{if(maps[id])RM.emit('snap',{m:id,a:maps[id].mobs.map(o=>[o.x,o.y,o.hp,o.dead?1:0,o.k,o.mh,o.sh>NOW?Math.round(o.sh-NOW):0]),t:(maps[id].tel||[]).map(q=>[q.x,q.y,q.r,Math.round(q.t0+q.dl-NOW),q.dl,q.bd?1:0,q.src,q.ex,q.ey,q.bm?1:0,q.vd])})})}if(t>(mpTick.n||0)){mpTick.n=t+250;RM.presence({u:uid,n:myName,m:P.map,x:P.x,y:P.y,s:P.eq.s,w:P.g.d,f:t<P.fu?1:0,b:P.base,p:P.eq.p})}const seen={};for(const q of RM.peers()){const d=q.presence;if(q.sameTab||!d||!d.u)continue;seen[d.u]=1;Object.assign(RP[d.u]||(RP[d.u]={u:d.u}),{x:d.x,y:d.y,m:d.m,n:d.n,s:d.s,w:d.w,f:d.f,b:d.b,p:d.p})}for(const k in RP)if(!seen[k])delete RP[k];if(P.duel&&!RP[P.duel]){P.duel=null;msg('Your PvP opponent left.','#ff0')}}
 
 /* ===== Ambience, music-ish chimes, UI clicks and talking voices ===== */
-let amb=true,AMB=null,ambNext=0,TKG=null,NZ=null;
-function ensureAC(){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state=='suspended')AC.resume();return AC}catch(e){return null}}
+let amb=true,AMB=null,ambNext=0,TKG=null,NZ=null,BUS=null;
+function ensureAC(){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state=='suspended')AC.resume();if(!BUS){BUS={m:AC.createGain(),s:AC.createGain(),a:AC.createGain(),v:AC.createGain()};BUS.m.connect(AC.destination);['s','a','v'].forEach(k=>BUS[k].connect(BUS.m));applyVol()}return AC}catch(e){return null}}
 ['pointerdown','keydown','touchstart'].forEach(ev=>addEventListener(ev,()=>{if(!mute)ensureAC()},{passive:true}));
 document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('button');if(b&&!b.disabled)sfx('click')},true);
 const rnd=(a,b)=>a+Math.random()*(b-a);
@@ -873,7 +890,7 @@ const AP={
  hor:{wf:90,wq:1,wg:.55,dr:30,dg:1,dt:'sine',ev:['warp','whale','shimmer'],iv:[3,8]}
 };
 function ambBuild(key,boss){
- const g=AC.createGain();g.gain.value=0;g.connect(AC.destination);
+ const g=AC.createGain();g.gain.value=0;g.connect(BUS.a);
  const p=AP[key]||AP.cave,nodes=[],o={g,nodes,boss};
  const s=AC.createBufferSource();s.buffer=noiseBuf();s.loop=true;
  const f=AC.createBiquadFilter();f.type='bandpass';f.frequency.value=p.wf;f.Q.value=p.wq;
@@ -935,12 +952,12 @@ function ambTick(t){
 /* ---- little talking blips for Vex / the Unknown Stranger ---- */
 function talkStop(){if(TKG&&AC){try{TKG.gain.cancelScheduledValues(AC.currentTime);TKG.gain.setTargetAtTime(0,AC.currentTime,.02)}catch(e){}}TKG=null}
 function talk(who,html){
- talkStop();if(mute||!ensureAC())return;
+ talkStop();if(mute||!CFG.talk||!ensureAC())return;
  try{
   const txt=String(html).replace(/<[^>]*>/g,'').replace(/&[a-z#0-9]+;/g,' ');
-  const vex=who=='Vex',g=AC.createGain();g.gain.value=1;g.connect(AC.destination);TKG=g;
+  const vex=who=='Vex',g=AC.createGain();g.gain.value=1;g.connect(BUS.v);TKG=g;
   let out=g,dly=null;
-  if(!vex){dly=AC.createDelay(1);dly.delayTime.value=.17;const fb=AC.createGain();fb.gain.value=.35;const wet=AC.createGain();wet.gain.value=.45;g.connect(dly);dly.connect(fb);fb.connect(dly);dly.connect(wet);wet.connect(AC.destination)}
+  if(!vex){dly=AC.createDelay(1);dly.delayTime.value=.17;const fb=AC.createGain();fb.gain.value=.35;const wet=AC.createGain();wet.gain.value=.45;g.connect(dly);dly.connect(fb);fb.connect(dly);dly.connect(wet);wet.connect(BUS.v)}
   const base=vex?95:210,sem=vex?[0,3,5,7,2,-2]:[0,-2,-5,3,-7,1],step=vex?.07:.09;
   const bp=(f,t,d,ty,vol,glide,lp)=>{const o=AC.createOscillator(),e=AC.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);if(glide)o.frequency.exponentialRampToValueAtTime(f*glide,t+d);e.gain.setValueAtTime(.0001,t);e.gain.linearRampToValueAtTime(vol,t+.008);e.gain.exponentialRampToValueAtTime(.0001,t+d);let n=o;if(lp){const fl=AC.createBiquadFilter();fl.type='lowpass';fl.frequency.value=lp;o.connect(fl);n=fl}n.connect(e);e.connect(out);o.start(t);o.stop(t+d+.03)};
   const t0=AC.currentTime+.04;let t=t0,k=0;
@@ -959,6 +976,84 @@ function talk(who,html){
   setTimeout(()=>{if(TKG===g)TKG=null;try{g.disconnect()}catch(e){}if(dly)try{dly.disconnect()}catch(e){}},(t-t0)*1000+2500);
  }catch(e){}
 }
+
+/* ===== Settings window: volume, keybinds, display (saved in this browser) ===== */
+const ACTS=[
+ ['sk1','Skill 1','1',()=>useSk('m')],['sk2','Skill 2','2',()=>useSk('f')],['sk3','Skill 3','3',()=>useSk('b')],
+ ['stop','Stop moving / drop target','x',()=>{P.path=[];P.tg=null}],
+ ['inv','Open Pack','i',()=>T('inv')],['gear','Open Gear','g',()=>T('gear')],['shop','Open Trade','t',()=>T('shop')],
+ ['skill','Open Skills','k',()=>T('skill')],['base','Open Base','b',()=>T('base')],['skin','Open Skins','v',()=>T('skin')],
+ ['quest','Open Quests (story mode)','j',()=>{if(story)T('quest')}],['set','Open Menu tab','o',()=>T('set')],
+ ['mute','Mute / unmute sound','m',()=>setMute(!mute)],
+ ['stg','Open / close this window','Escape',()=>stgToggle()]
+];
+const CD={vm:80,vs:100,va:70,vv:100,mute:false,amb:true,talk:true,shake:100,flash:true,dmg:true,part:true,help:true,keys:{}};
+ACTS.forEach(a=>CD.keys[a[0]]=a[2]);
+const CFG=(()=>{let o={};try{o=JSON.parse(sget('cfg')||'{}')||{}}catch(e){}const c=Object.assign({},CD,o);c.keys=Object.assign({},CD.keys);if(o.keys&&typeof o.keys=='object')for(const k in CD.keys)if(typeof o.keys[k]=='string')c.keys[k]=o.keys[k];['vm','vs','va','vv','shake'].forEach(k=>{c[k]=Math.max(0,Math.min(100,+c[k]));if(isNaN(c[k]))c[k]=CD[k]});return c})();
+mute=!!CFG.mute;amb=CFG.amb!==false;
+function cfgSave(){CFG.mute=mute;CFG.amb=amb;try{sset('cfg',JSON.stringify(CFG))}catch(e){}}
+const volCurve=v=>Math.pow(Math.max(0,Math.min(100,v))/100,2);
+function applyVol(){if(!BUS)return;BUS.m.gain.value=volCurve(CFG.vm);BUS.s.gain.value=volCurve(CFG.vs);BUS.a.gain.value=volCurve(CFG.va);BUS.v.gain.value=volCurve(CFG.vv)}
+const keyName=k=>!k?'Unbound':k==' '?'Space':k=='Escape'?'Esc':k=='ArrowUp'?'Up':k=='ArrowDown'?'Down':k=='ArrowLeft'?'Left':k=='ArrowRight'?'Right':k.length==1?k.toUpperCase():k;
+const keyShort=k=>!k?'-':k==' '?'Spc':k=='Escape'?'Esc':k=='ArrowUp'?'\u2191':k=='ArrowDown'?'\u2193':k=='ArrowLeft'?'\u2190':k=='ArrowRight'?'\u2192':k.length==1?k.toUpperCase():k.slice(0,3);
+const skKeys=()=>['sk1','sk2','sk3'].map(k=>keyShort(CFG.keys[k])).join('/');
+function helpTxt(){return 'Click to move \u00b7 click rocks to mine \u00b7 click enemies to fight \u00b7 keys '+skKeys()+' use skills \u00b7 '+(story?'the Unknown Stranger sits in the small capsule bottom-right':'Vex the dealer waits in the big capsule on the left')}
+function applyHelp(){const hp=document.getElementById('help');if(!hp)return;hp.style.display=CFG.help?'':'none';if(playing)hp.textContent=helpTxt()}
+function setMute(v){mute=!!v;if(mute)talkStop();cfgSave();try{msg(mute?'Sound muted.':'Sound on.','#ff0')}catch(e){}if(stgOpen())stgRender();ui()}
+applyHelp();
+let stgTab='snd',stgCap=null,stgNote='';
+const stgOpen=()=>document.getElementById('stg').style.display=='block';
+function openSet(){stgCap=null;stgNote='';stgRender();document.getElementById('stg').style.display='block';document.getElementById('stgb').style.display='block'}
+function closeSet(){stgCap=null;document.getElementById('stg').style.display='none';document.getElementById('stgb').style.display='none';cfgSave()}
+function stgToggle(){stgOpen()?closeSet():openSet()}
+const sRow=(k,l,s)=>`<div class="sr"><div><label>${l}</label><br><small>${s}</small></div><input type="range" min="0" max="100" value="${CFG[k]}" oninput="setSlider('${k}',this)" onchange="sliderDone('${k}')"><span class="v" id="sv_${k}">${CFG[k]}</span></div>`;
+const tRow=(k,l,s)=>{const on=k=='mute'?mute:k=='amb'?amb:CFG[k];return `<div class="sr"><div><label>${l}</label><br><small>${s}</small></div><button class="tg ${on?'on':''}" onclick="setTog('${k}')">${on?'On':'Off'}</button></div>`};
+function stgRender(){
+ let h='<h2>Settings</h2><div class="st">'+[['snd','Sound'],['key','Controls'],['gam','Display']].map(([t,l])=>`<button class="${stgTab==t?'on':''}" onclick="stgGo('${t}')">${l}</button>`).join('')+'</div>';
+ if(stgTab=='snd')h+=tRow('mute','Mute everything','Silences effects, ambience and voices')+sRow('vm','Master volume','Overall loudness')+sRow('vs','Effects','Mining, combat, footsteps, buttons')+sRow('va','Ambience volume','Wind, caves and background sounds')+tRow('amb','Ambience','Background sound for each area')+sRow('vv','Voices volume','Vex and the Stranger talking')+tRow('talk','Talking sounds','Little blips while someone speaks');
+ else if(stgTab=='key')h+='<p class="sn">Click a key, then press the new key. <b>Esc</b> cancels, <b>Backspace</b> unbinds. If a key is already used, the two actions swap.</p>'+(stgNote?'<p class="sn" style="color:#0ff">'+stgNote+'</p>':'')+ACTS.map(a=>`<div class="sr"><label>${a[1]}</label><button class="kb ${stgCap==a[0]?'cap':''}" onclick="stgBind('${a[0]}')">${stgCap==a[0]?'Press a key...':keyName(CFG.keys[a[0]])}</button></div>`).join('');
+ else h+=sRow('shake','Screen shake','0 turns it off')+tRow('flash','Red damage flash','Screen flash when you die')+tRow('dmg','Damage numbers','Floating numbers on hits')+tRow('part','Particles','Sparks and bursts (turn off for speed)')+tRow('help','Help bar','Tip line under the game');
+ h+='<div class="sf"><button onclick="stgReset()">Reset this tab</button><button onclick="closeSet()">Close</button></div><p class="sn" style="text-align:center">The game keeps running while this is open.</p>';
+ document.getElementById('stg').innerHTML=h;
+}
+function stgGo(t){stgTab=t;stgCap=null;stgNote='';stgRender()}
+function setSlider(k,el){CFG[k]=+el.value;const v=document.getElementById('sv_'+k);if(v)v.textContent=el.value;applyVol()}
+function sliderDone(k){cfgSave();if(k=='vs'||k=='vm')sfx('pick');else if(k=='vv'&&!mute)talk('Vex','Testing, one two three.')}
+function setTog(k){if(k=='mute')return setMute(!mute);if(k=='amb'){amb=!amb;CFG.amb=amb}else{CFG[k]=!CFG[k];if(k=='help')applyHelp()}cfgSave();stgRender();ui()}
+function stgBind(id){stgCap=id;stgNote='';stgRender()}
+function stgReset(){
+ if(stgTab=='snd'){['vm','vs','va','vv'].forEach(k=>CFG[k]=CD[k]);mute=false;amb=true;CFG.talk=true;applyVol()}
+ else if(stgTab=='key'){for(const k in CD.keys)CFG.keys[k]=CD.keys[k];stgNote='Controls reset.';applyHelp()}
+ else{['shake','flash','dmg','part','help'].forEach(k=>CFG[k]=CD[k]);applyHelp()}
+ stgCap=null;cfgSave();stgRender();ui();
+}
+addEventListener('keydown',e=>{
+ const k=e.key&&e.key.length==1?e.key.toLowerCase():e.key;
+ if(!k)return;
+ if(stgCap){
+  e.preventDefault();e.stopPropagation();
+  if(['Shift','Control','Alt','Meta','CapsLock'].includes(k))return;
+  const id=stgCap;stgCap=null;
+  if(k=='Escape')stgNote='Cancelled.';
+  else if(k=='Backspace'||k=='Delete'){CFG.keys[id]='';stgNote='Unbound.'}
+  else{
+   const old=CFG.keys[id],other=Object.keys(CFG.keys).find(o=>o!=id&&CFG.keys[o]===k);
+   CFG.keys[id]=k;
+   if(other){CFG.keys[other]=old;const nm=ACTS.find(a=>a[0]==other)[1];stgNote=keyName(k)+' was used by "'+nm+'", which now has '+keyName(old)+'.'}
+   else stgNote='Bound to '+keyName(k)+'.';
+  }
+  cfgSave();applyHelp();stgRender();return;
+ }
+ const t=e.target;
+ if(t&&/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)&&!(t.type=='range'&&k==CFG.keys.stg))return;
+ if(e.ctrlKey||e.metaKey||e.altKey||k=='')return;
+ const a=ACTS.find(a=>CFG.keys[a[0]]===k);
+ if(!a)return;
+ const free=a[0]=='mute'||a[0]=='stg';
+ if(!free&&(!playing||stgOpen()))return;
+ if(e.repeat&&!/^sk/.test(a[0]))return;
+ e.preventDefault();a[3]();
+},true);
 
 let last=performance.now();
 function loop(t){const dt=Math.min(.1,(t-last)/1000);last=t;if(playing){upd(dt,t);if(RM)mpTick(t);if(P.map!='surf'&&Math.random()<.004)sfx('drip')}ambTick(t);draw(t);if(dirty){dirty=0;render();save()}requestAnimationFrame(loop)}
