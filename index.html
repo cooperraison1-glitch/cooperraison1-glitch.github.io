@@ -747,49 +747,53 @@ requestAnimationFrame(pvDraw);
 
 /* ACHIEVEMENTS */
 const ACH=[];
-{const A=(id,n,d,g,p,r)=>ACH.push({id,n,d,g,p,r});
+{const A=(id,n,d,g,p)=>ACH.push({id,n,d,g,p});
 const S=k=>P.st[k]||0;
-A('m1','First Swing','Mine 1 ore',1,()=>S('mine'),20);
-A('m2','Rock Hound','Mine 50 ore',50,()=>S('mine'),100);
-A('m3','Ore Machine','Mine 250 ore',250,()=>S('mine'),500);
-A('m4','Planet Eater','Mine 1000 ore',1000,()=>S('mine'),2500);
-A('r1','Lucky Strike','Mine 1 rare variant ore',1,()=>S('rare'),150);
-A('r2','Gem Hunter','Mine 10 rare variant ores',10,()=>S('rare'),1000);
-A('r3','Collector','Find 5 different rare variants',5,()=>P.rv.length,2500);
-A('r4','Complete Set','Find all '+VB+' rare variants',VB,()=>P.rv.length,25000);
-A('k1','First Blood','Defeat 1 enemy',1,()=>S('kill'),30);
-A('k2','Monster Slayer','Defeat 25 enemies',25,()=>S('kill'),400);
-A('k3','Exterminator','Defeat 100 enemies',100,()=>S('kill'),2000);
-A('b1','Boss Hunter','Defeat 1 boss',1,()=>P.trop.length,1000);
-A('b2','Boss Crusher','Defeat 4 bosses',4,()=>P.trop.length,6000);
-A('b3','Apex Slayer','Defeat all '+BS.length+' bosses',BS.length,()=>P.trop.length,50000);
-A('s1','Small Business','Earn 500cr from selling ore',500,()=>S('sold'),100);
-A('s2','Merchant','Earn 10,000cr from selling ore',1e4,()=>S('sold'),1000);
-A('s3','Tycoon','Earn 250,000cr from selling ore',25e4,()=>S('sold'),15000);
-A('s4','Billionaire Miner','Earn 5,000,000cr from selling ore',5e6,()=>S('sold'),100000);
-A('c1','Deep Pockets','Hold 10,000cr at once',1e4,()=>P.cr,500);
-A('l1','Apprentice','Reach Mining level 5',5,()=>lv(P.xp),200);
-A('l2','Journeyman','Reach Mining level 15',15,()=>lv(P.xp),1500);
-A('l3','Master Miner','Reach Mining level 30',30,()=>lv(P.xp),10000);
-A('l4','Warrior','Reach Fighting level 10',10,()=>lv(P.fx),800);
-A('l5','Guardian','Reach Blocking level 10',10,()=>lv(P.bx),800);
-A('g1','Better Tools','Own a Pickaxe upgrade tier 3',3,()=>P.g.p,300);
-A('g2','Suited Up','Own Suit tier 4',4,()=>P.g.s,1000);
-A('g3','Fully Kitted','Reach pickaxe tier 12',12,()=>P.g.p,30000);
-A('e1','Cave Explorer','Visit 4 different areas',4,()=>P.vis.length,300);
-A('e2','World Traveller','Visit all '+AR.length+' areas',AR.length,()=>P.vis.length,10000);
-A('h1','Home Builder','Place 3 base structures',3,()=>P.base.length,200);
-A('h2','Fortified','Place 12 base structures',12,()=>P.base.length,1000);
-A('h3','Squirrel','Bank 50 ore in lockers',50,()=>P.bank.length,300);
-A('d1','Learning Experience','Die for the first time',1,()=>S('death'),10);
-A('d2','Hard Head','Die 10 times',10,()=>S('death'),100);}
+A('m1','First Swing','Mine 1 ore',1,()=>S('mine'));
+A('m2','Rock Hound','Mine 50 ore',50,()=>S('mine'));
+A('m3','Ore Machine','Mine 250 ore',250,()=>S('mine'));
+A('m4','Planet Eater','Mine 1000 ore',1000,()=>S('mine'));
+A('r1','Lucky Strike','Mine 1 rare variant ore',1,()=>S('rare'));
+A('r2','Gem Hunter','Mine 10 rare variant ores',10,()=>S('rare'));
+A('r3','Collector','Find 5 different rare variants',5,()=>P.rv.length);
+A('r4','Complete Set','Find all '+VB+' rare variants',VB,()=>P.rv.length);
+A('k1','First Blood','Defeat 1 enemy',1,()=>S('kill'));
+A('k2','Monster Slayer','Defeat 25 enemies',25,()=>S('kill'));
+A('k3','Exterminator','Defeat 100 enemies',100,()=>S('kill'));
+A('b1','Boss Hunter','Defeat 1 boss',1,()=>P.trop.length);
+A('b2','Boss Crusher','Defeat 4 bosses',4,()=>P.trop.length);
+A('b3','Apex Slayer','Defeat all '+BS.length+' bosses',BS.length,()=>P.trop.length);
+A('s1','Small Business','Earn 500cr from selling ore',500,()=>S('sold'));
+A('s2','Merchant','Earn 10,000cr from selling ore',1e4,()=>S('sold'));
+A('s3','Tycoon','Earn 250,000cr from selling ore',25e4,()=>S('sold'));
+A('s4','Billionaire Miner','Earn 5,000,000cr from selling ore',5e6,()=>S('sold'));
+A('c1','Deep Pockets','Hold 10,000cr at once',1e4,()=>P.cr);
+A('l1','Apprentice','Reach Mining level 5',5,()=>lv(P.xp));
+A('l2','Journeyman','Reach Mining level 15',15,()=>lv(P.xp));
+A('l3','Master Miner','Reach Mining level 30',30,()=>lv(P.xp));
+A('l4','Warrior','Reach Fighting level 10',10,()=>lv(P.fx));
+A('l5','Guardian','Reach Blocking level 10',10,()=>lv(P.bx));
+A('g1','Better Tools','Own a Pickaxe upgrade tier 3',3,()=>P.g.p);
+A('g2','Suited Up','Own Suit tier 4',4,()=>P.g.s);
+A('g3','Fully Kitted','Reach pickaxe tier 12',12,()=>P.g.p);
+A('e1','Cave Explorer','Visit 4 different areas',4,()=>P.vis.length);
+A('e2','World Traveller','Visit all '+AR.length+' areas',AR.length,()=>P.vis.length);
+A('h1','Home Builder','Place 3 base structures',3,()=>P.base.length);
+A('h2','Fortified','Place 12 base structures',12,()=>P.base.length);
+A('h3','Squirrel','Bank 50 ore in lockers',50,()=>P.bank.length);
+A('d1','Learning Experience','Die for the first time',1,()=>S('death'));
+A('d2','Hard Head','Die 10 times',10,()=>S('death'));}
+
+{const hx=(h,l)=>{const a=.7*Math.min(l,1-l),f=n=>{const k=(n+h/30)%12;return Math.round(255*(l-a*Math.max(-1,Math.min(k-3,9-k,1)))).toString(16).padStart(2,'0')};return '#'+f(0)+f(8)+f(4)};
+ACH.forEach((a,i)=>{const col=hx((i*47)%360,.55+(i%3)*.08);a.sk=i%2?'p':'s';const arr=a.sk=='s'?SS:PS;a.si=arr.length;arr.push({n:a.n+(a.sk=='s'?' Suit':' Pick'),col,c:0,ach:a.id})})}
+function achGive(a){if(!P.own[a.sk].includes(a.si))P.own[a.sk].push(a.si)}
 function achCheck(){if(!playing||!P.ach)return;if(P.map&&!P.vis.includes(P.map)&&AI[P.map]!=null&&!/^b\d+$/.test(P.map))P.vis.push(P.map);
- for(const a of ACH){if(P.ach.includes(a.id))continue;let v=0;try{v=a.p()}catch(e){}if(v>=a.g){P.ach.push(a.id);P.cr+=a.r;msg('ACHIEVEMENT: '+a.n+' (+'+a.r+'cr)','#0ff');banner('ACHIEVEMENT: '+a.n.toUpperCase(),'#0ff');sfx('lvl');ui()}}}
+ for(const a of ACH){if(P.ach.includes(a.id)){achGive(a);continue}let v=0;try{v=a.p()}catch(e){}if(v>=a.g){P.ach.push(a.id);achGive(a);msg('ACHIEVEMENT: '+a.n+'! Unlocked the '+(a.sk=='s'?SS:PS)[a.si].n+' skin.','#0ff');banner('ACHIEVEMENT: '+a.n.toUpperCase(),'#0ff');sfx('lvl');ui()}}}
 setInterval(achCheck,800);
 function achTab(){const n=P.ach.length;let h='<p style="color:#ff0;margin:4px 0 2px">Achievements '+n+'/'+ACH.length+'</p><div style="height:6px;background:#2a241d;border:1px solid #000;margin-bottom:4px"><div style="height:100%;width:'+(n/ACH.length*100)+'%;background:#0cf"></div></div>';
  const ord=ACH.slice().sort((a,b)=>P.ach.includes(a.id)-P.ach.includes(b.id));
  for(const a of ord){const dn=P.ach.includes(a.id);let v=0;try{v=Math.min(a.g,a.p())}catch(e){}const pc=Math.round(v/a.g*100);
-  h+='<div class="rw" style="'+(dn?'opacity:.85':'')+'"><div style="flex:1"><u style="color:'+(dn?'#6f6':'#ff0')+'">'+(dn?'✔ ':'')+a.n+'</u><br><small>'+a.d+' · reward '+a.r.toLocaleString()+'cr</small>'+(dn?'':'<div style="height:5px;background:#2a241d;border:1px solid #000;margin-top:3px"><div style="height:100%;width:'+pc+'%;background:#0cf"></div></div><small>'+Math.floor(v).toLocaleString()+' / '+a.g.toLocaleString()+'</small>')+'</div></div>'}
+  h+='<div class="rw" style="'+(dn?'opacity:.85':'')+'"><div style="flex:1"><u style="color:'+(dn?'#6f6':'#ff0')+'">'+(dn?'✔ ':'')+a.n+'</u><br><small>'+a.d+' · reward: '+(a.sk=='s'?SS:PS)[a.si].n+' skin</small>'+(dn?'<span style="color:'+(a.sk=='s'?SS:PS)[a.si].col+'">■</span> <small>Skin unlocked in the Skins tab</small>':'<div style="height:5px;background:#2a241d;border:1px solid #000;margin-top:3px"><div style="height:100%;width:'+pc+'%;background:#0cf"></div></div><small>'+Math.floor(v).toLocaleString()+' / '+a.g.toLocaleString()+'</small>')+'</div></div>'}
  return h}
 function render(){document.querySelectorAll('#tabs button').forEach(b=>b.className=b.dataset.t==tab?'on':'');let h='';const cap=trd();
  if(tab=='inv'){h='<div id="ig">';for(let i=0;i<28;i++){const o=P.inv[i];h+='<div class="sl"'+(o!=null?' onclick="drop('+i+')" style="cursor:pointer" title="Click to drop"':'')+'>'+(o!=null?`<i style="background:${OR[o].col}"></i><b>${OR[o].n[0]}</b>`:'')+'</div>'}h+=`</div><p>Ore value: ${val()}cr<br>Click an ore to drop it. Walk over it to pick it up. Ore is AT RISK until sold.</p>`}
@@ -805,7 +809,7 @@ function render(){document.querySelectorAll('#tabs button').forEach(b=>b.classNa
  else if(tab=='set'){h='<p style="color:#ff0">Settings</p>'+row('Settings','Volume, keybinds, display options','Open','openSet()')+row('Sound',mute?'Muted':'On','Toggle','setMute(!mute)')+row('Save & quit','Auto-saves as you play','Quit','quitG()')+row('Restart game','Wipes this save file and builds new maps',conf?'Confirm':'Restart','rq()')+(conf?row('Keep playing','Cancel the restart','Cancel','conf=0;ui()'):'')+'<p style="font-weight:normal;color:#ddd">Controls: click ground to move, rocks to mine, enemies to fight, '+(story?'the Unknown Stranger':'Vex')+' to trade. Stay near the capsule when oxygen runs low.</p>'}
  else{if(!cap)h='<p>Skins can only be bought in the capsule. Skins are soulbound: nobody can loot them.</p>';
   if(pv){const q=(pv.t=='s'?SS:PS)[pv.i];h+=`<div id=\"pvw\"><canvas id=\"pvc\" width=\"120\" height=\"132\"></canvas><b style=\"color:#ff0\">${q.n}</b><br><small style=\"font-weight:normal;color:#ddd\">Preview: ${pv.t=='s'?'wearing your equipped pickaxe':'on your equipped suit'}</small><br><button class=\"pvb\" style=\"background:#463e34;color:#ff0;border:1px solid #000;font:inherit;font-size:11px;padding:1px 8px;cursor:pointer\" onclick=\"pvSet(null)\">Close preview</button></div>`}
-  for(const[t,l,A]of[['s','Suit',SS],['p','Pickaxe',PS]]){h+=`<p style=\"color:#ff0\">${l} skins</p>`;A.forEach((s,i)=>{const own=P.own[t].includes(i),st=own?(P.eq[t]==i?'Equipped':'Owned'):(s.boss!=null?'Boss reward: defeat '+BS[s.boss][0]:'Soulbound'),lb=own?(P.eq[t]==i?'On':'Equip'):(s.boss!=null?'Locked':s.c+'cr'),dis=(!own&&(s.boss!=null||!cap||P.cr<s.c))||P.eq[t]==i;h+=`<div class=\"rw\"><div><u><span style=\"color:${s.col}\">■</span> ${s.n}</u><br><small>${st}</small><br><button class=\"pvb\" onclick=\"pvSet('${t}',${i})\">Preview</button></div><button ${dis?'disabled':''} onclick=\"skin('${t}',${i})\">${lb}</button></div>`})}}
+  for(const[t,l,A]of[['s','Suit',SS],['p','Pickaxe',PS]]){h+=`<p style=\"color:#ff0\">${l} skins</p>`;A.forEach((s,i)=>{const own=P.own[t].includes(i),st=own?(P.eq[t]==i?'Equipped':'Owned'):(s.ach!=null?'Achievement reward: '+ACH.find(q=>q.id==s.ach).n:s.boss!=null?'Boss reward: defeat '+BS[s.boss][0]:'Soulbound'),lb=own?(P.eq[t]==i?'On':'Equip'):(s.boss!=null||s.ach!=null?'Locked':s.c+'cr'),dis=(!own&&(s.boss!=null||s.ach!=null||!cap||P.cr<s.c))||P.eq[t]==i;h+=`<div class=\"rw\"><div><u><span style=\"color:${s.col}\">■</span> ${s.n}</u><br><small>${st}</small><br><button class=\"pvb\" onclick=\"pvSet('${t}',${i})\">Preview</button></div><button ${dis?'disabled':''} onclick=\"skin('${t}',${i})\">${lb}</button></div>`})}}
  document.getElementById('pc').innerHTML=h}
 const QS=[
  {id:'m1',n:'First Dig',d:'Mine 10 ore',g:10,k:'mine',r:60,line:'Start small. Pull ten pieces of ore out of that dead rock. I want to see if you can really dig.'},
@@ -843,7 +847,7 @@ function openStranger(){if(!story){openVex();return}if(!P.met){lore(0);return}co
 function sell(){if(!trd())return;const v=val(),n=P.inv.length;P.cr+=v;P.st.sold+=v;P.inv=[];sfx('sell');msg(cap1(dealer())+' takes '+n+' ore for '+v+' credits.','#ff0');ui()}
 function repair(){if(!trd())return;const c=(PK[P.g.p].du-P.du)*2;if(P.cr<c)return;P.cr-=c;P.du=PK[P.g.p].du;msg('Pickaxe repaired for '+c+'cr.','#ff0');ui()}
 function buy(k){if(!trd())return;const n=ARR[k][P.g[k]+1];if(!n||P.cr<n.c)return;P.cr-=n.c;P.g[k]++;sfx('sell');if(k=='p')P.du=n.du;msg('Bought '+n.n+' for '+n.c+'cr.','#0f0');ui()}
-function skin(t,i){if(!P.own[t].includes(i)){const s=(t=='s'?SS:PS)[i];if(s.boss!=null||!trd()||P.cr<s.c)return;P.cr-=s.c;P.own[t].push(i);msg('Unlocked '+s.n+'.','#0f0')}P.eq[t]=i;ui()}
+function skin(t,i){if(!P.own[t].includes(i)){const s=(t=='s'?SS:PS)[i];if(s.boss!=null||s.ach!=null||!trd()||P.cr<s.c)return;P.cr-=s.c;P.own[t].push(i);msg('Unlocked '+s.n+'.','#0f0')}P.eq[t]=i;ui()}
 function rq(){if(!conf){conf=1;ui();return}
  Object.keys(P).forEach(k=>delete P[k]);Object.assign(P,mkP());mkMaps();S.length=0;conf=0;tab='inv';
  document.getElementById('ch').innerHTML='';msg('Game restarted. A fresh planet awaits.','#0f0');playing=false;showClass();ui()}
